@@ -43,7 +43,7 @@ def main():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False 
+                running = False
             elif event.type == pygame.KEYUP:
                 drone.hover()
             elif event.type == pygame.KEYDOWN:
@@ -122,4 +122,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
