@@ -3,9 +3,9 @@
 import socket
 from venthur_api import libardrone
 
-DRONE = libardrone.ARDrone()
+
 BUFFER_LENGTH = 1024
-PORT = 3000
+PORT = 3001
 IP = "127.0.0.1"
 
 PING = 0x00
@@ -26,25 +26,29 @@ INCREASE_SPEED = 0x0E
 DECREASE_SPEED = 0x0F
 TERMINATE = 0x10
 
-COMMANDS_CENTRAL = {
-    # PING: DRONE.ping,
-    TAKE_OFF: DRONE.takeoff,
-    LAND: DRONE.land,
-    HOVER: DRONE.hover,
-    MOVE_LEFT: DRONE.move_left,
-    MOVE_RIGHT: DRONE.move_right,
-    MOVE_UP: DRONE.move_up,
-    MOVE_DOWN: DRONE.move_down,
-    MOVE_FORWARD: DRONE.move_forward,
-    MOVE_BACKWARD: DRONE.move_backward,
-    TURN_LEFT: DRONE.turn_left,
-    TURN_RIGHT: DRONE.turn_right,
-    RESET: DRONE.reset,
-    CALIBRATE: DRONE.trim,
-    INCREASE_SPEED: DRONE.increase_speed,
-    DECREASE_SPEED: DRONE.decrease_speed,
-    TERMINATE: DRONE.halt
-}
+
+def main_init():
+    global DRONE, COMMANDS_CENTRAL
+    DRONE = libardrone.ARDrone()
+    COMMANDS_CENTRAL = {
+        # PING: DRONE.ping,
+        TAKE_OFF: DRONE.takeoff,
+        LAND: DRONE.land,
+        HOVER: DRONE.hover,
+        MOVE_LEFT: DRONE.move_left,
+        MOVE_RIGHT: DRONE.move_right,
+        MOVE_UP: DRONE.move_up,
+        MOVE_DOWN: DRONE.move_down,
+        MOVE_FORWARD: DRONE.move_forward,
+        MOVE_BACKWARD: DRONE.move_backward,
+        TURN_LEFT: DRONE.turn_left,
+        TURN_RIGHT: DRONE.turn_right,
+        RESET: DRONE.reset,
+        CALIBRATE: DRONE.trim,
+        INCREASE_SPEED: DRONE.increase_speed,
+        DECREASE_SPEED: DRONE.decrease_speed,
+        TERMINATE: DRONE.halt
+    }
 
 
 # Syntatic Sugars
@@ -120,4 +124,5 @@ def server():
         socket.close()
 
 if __name__ == "__main__":
+    main_init()
     server()
