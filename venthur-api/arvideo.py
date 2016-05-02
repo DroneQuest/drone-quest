@@ -39,7 +39,7 @@ import sys
 try:
     import psyco
 except ImportError:
-    print "Please install psyco for better video decoding performance."
+    print("Please install psyco for better video decoding performance.")
 
 
 # from zig-zag back to normal
@@ -405,7 +405,7 @@ def get_pheader(bitreader):
     # double resolution presolution-1 times
     width = width << presolution - 1
     height = height << presolution - 1
-    #print "width/height:", width, height
+    # print "width/height:", width, height
     ptype = bitreader.read(3)
     pquant = bitreader.read(5)
     pframe = bitreader.read(32)
@@ -450,7 +450,7 @@ def get_mb(bitreader, picture, width, offset):
             col = MB_COL_MAP[i]
             picture[offset + row*width + col] = ''.join((chr(r), chr(g), chr(b)))
     else:
-        print "mbc was not zero"
+        print("mbc was not zero")
 
 
 def get_block(bitreader, has_coeff):
@@ -502,11 +502,11 @@ def get_gob(bitreader, picture, slicenr, width):
         bitreader.align()
         gobsc = bitreader.read(22)
         if gobsc == 0b0000000000000000111111:
-            print "weeeee"
+            print("weeeee")
             return False
         elif (not (gobsc & 0b0000000000000000100000) or
              (gobsc & 0b1111111111111111000000)):
-            print "Got wrong GOBSC, aborting.", bin(gobsc)
+            print("Got wrong GOBSC, aborting.", bin(gobsc))
             return False
         _ = bitreader.read(5)
     offset = slicenr*16*width
@@ -547,7 +547,7 @@ except NameError:
 
 def main():
     fh = open('framewireshark.raw', 'r')
-    #fh = open('videoframe.raw', 'r')
+    # fh = open('videoframe.raw', 'r')
     data = fh.read()
     fh.close()
     runs = 20
@@ -555,11 +555,11 @@ def main():
     for i in range(runs):
         print '.',
         width, height, image, ti = read_picture(data)
-        #show_image(image, width, height)
+        # show_image(image, width, height)
         t += ti
-    print
-    print 'avg time:\t', t / runs, 'sec'
-    print 'avg fps:\t', 1 / (t / runs), 'fps'
+    print('')
+    print('avg time:\t', t / runs, 'sec')
+    print('avg fps:\t', 1 / (t / runs), 'fps')
     if 'image' in sys.argv:
         import pygame
         pygame.init()
@@ -576,4 +576,3 @@ if __name__ == '__main__':
         cProfile.run('main()')
     else:
         main()
-
