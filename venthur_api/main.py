@@ -1,5 +1,5 @@
 # -*-coding:utf-8-*-
-"""Handle server operations of reading incoming streams and echoing them"""
+"""Handle server operations of reading incoming streams and echoing them."""
 import socket
 import libardrone
 
@@ -27,28 +27,25 @@ DECREASE_SPEED = 0x0F
 TERMINATE = 0x10
 
 
-def main_init():
-    global DRONE, COMMANDS_CENTRAL
-    DRONE = libardrone.ARDrone()
-    COMMANDS_CENTRAL = {
-        # PING: DRONE.ping,
-        TAKE_OFF: DRONE.takeoff,
-        LAND: DRONE.land,
-        HOVER: DRONE.hover,
-        MOVE_LEFT: DRONE.move_left,
-        MOVE_RIGHT: DRONE.move_right,
-        MOVE_UP: DRONE.move_up,
-        MOVE_DOWN: DRONE.move_down,
-        MOVE_FORWARD: DRONE.move_forward,
-        MOVE_BACKWARD: DRONE.move_backward,
-        TURN_LEFT: DRONE.turn_left,
-        TURN_RIGHT: DRONE.turn_right,
-        RESET: DRONE.reset,
-        CALIBRATE: DRONE.trim,
-        INCREASE_SPEED: DRONE.increase_speed,
-        DECREASE_SPEED: DRONE.decrease_speed,
-        TERMINATE: DRONE.halt
-    }
+COMMANDS_CENTRAL = {
+    # PING: DRONE.ping,
+    TAKE_OFF: 'takeoff',
+    LAND: 'land',
+    HOVER: 'hover',
+    MOVE_LEFT: 'move_left',
+    MOVE_RIGHT: 'move_right',
+    MOVE_UP: 'move_up',
+    MOVE_DOWN: 'move_down',
+    MOVE_FORWARD: 'move_forward',
+    MOVE_BACKWARD: 'move_backward',
+    TURN_LEFT: 'turn_left',
+    TURN_RIGHT: 'turn_right',
+    RESET: 'reset',
+    CALIBRATE: 'trim',
+    INCREASE_SPEED: 'increase_speed',
+    DECREASE_SPEED: 'decrease_speed',
+    TERMINATE: 'halt',
+}
 
 
 # Syntatic Sugars
@@ -63,7 +60,7 @@ __AUTHOR__ = ['Munir Ibrahim', 'Norton Pengra', 'Will Weatherford']
 
 
 def setup_server():
-    """Build a socket object on localhost and specified port"""
+    """Build a socket object on localhost and specified port."""
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
@@ -73,14 +70,13 @@ def setup_server():
 
 
 def server_listen(server):
-    """Accept connections from the client"""
+    """Accept connections from the client."""
     conn, addr = server.accept()
     return (conn, addr)
 
 
 def server_read(connection):
-    """Read and parse message from client"""
-
+    """Read and parse message from client."""
     string = ''.encode('utf-8')
     while True:
         part = connection.recv(BUFFER_LENGTH)
@@ -91,7 +87,7 @@ def server_read(connection):
 
 
 def server_response(string, connection):
-    """Send back specified string to specified connection"""
+    """Send back specified string to specified connection."""
     if isinstance(string, bytes):
         connection.send(string)
     else:
@@ -101,19 +97,23 @@ def server_response(string, connection):
 def parse_command(command):
     """Convert the command to hexadecimals."""
     # command = hex(int(command, base=16))
-    print("DOING COMMAND")
-    COMMANDS_CENTRAL[command]()
+    return COMMANDS_CENTRAL[command]
 
 
 def server():
     """Main server loop."""
+    drone = libardrone.ARDrone()
+    print('Done setting up drone.')
     socket = setup_server()
     try:
         while True:
             connection, address = socket.accept()
-            command = server_read(connection)
-            print("recv:", command)
-            parse_command(command)
+            command_code = server_read(connection)
+            print("received command code: {}".format(command_code))
+            command_name = parse_command(command_code)
+            print("Doing command name: {}".format(command_name))
+            command = getattr(drone, command_name)
+            command()
             server_response(str(STATUS_CODES[OK]), connection)
             connection.close()
     except KeyboardInterrupt:
@@ -123,10 +123,8 @@ def server():
         except NameError:
             pass
     finally:
-        DRONE.halt()
+        drone.halt()
         socket.close()
 
 if __name__ == "__main__":
-    main_init()
-    print("Done with init")
     server()
