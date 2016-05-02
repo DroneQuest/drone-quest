@@ -46,6 +46,8 @@ COMMANDS_CENTRAL = {
     TERMINATE: DRONE.halt
 }
 
+__AUTHOR__ = ['Munir Ibrahim', 'Norton Pengra', 'Will Weatherford']
+
 
 def setup_server():
     """Build a socket object on localhost and specified port."""
