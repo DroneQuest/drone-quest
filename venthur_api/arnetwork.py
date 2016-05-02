@@ -29,7 +29,8 @@ import struct
 import threading
 import multiprocessing
 
-from venthur_api import arvideo
+# from venthur_api import arvideo
+import arvideo
 
 ARDRONE_NAVDATA_PORT = 5554
 ARDRONE_VIDEO_PORT = 5555

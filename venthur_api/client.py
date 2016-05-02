@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Dummy Test Client."""
 import socket
-from server.main import PORT, BUFFER_LENGTH
+from main import PORT, BUFFER_LENGTH
 
 
 def setup_socket():
@@ -30,7 +30,7 @@ def send_message(socket, message):
     if hasattr(message, 'encode'):
         socket.sendall(message.encode('utf-8'))
     else:
-        socket.sendall(message)
+        socket.sendall(bytes(message))
 
 
 def get_reply(client):

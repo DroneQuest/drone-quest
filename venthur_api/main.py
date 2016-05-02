@@ -1,16 +1,16 @@
 # -*-coding:utf-8-*-
 """Handle server operations of reading incoming streams and echoing them"""
 import socket
-from venthur_api import libardrone
+import libardrone
 
 
 BUFFER_LENGTH = 1024
-PORT = 3001
+PORT = 3000
 IP = "127.0.0.1"
 
 PING = 0x00
-TAKE_OFF = 0x01
-LAND = 0x02
+TAKE_OFF = "A"
+LAND = "B"
 HOVER = 0x03
 MOVE_LEFT = 0x04
 MOVE_RIGHT = 0x05
@@ -100,8 +100,9 @@ def server_response(string, connection):
 
 def parse_command(command):
     """Convert the command to hexadecimals."""
-    command = hex(int(command, base=16))
-    DRONE[command]()
+    # command = hex(int(command, base=16))
+    print("DOING COMMAND")
+    COMMANDS_CENTRAL[command]()
 
 
 def server():
@@ -112,6 +113,7 @@ def server():
             connection, address = socket.accept()
             command = server_read(connection)
             print("recv:", command)
+            parse_command(command)
             server_response(str(STATUS_CODES[OK]), connection)
             connection.close()
     except KeyboardInterrupt:
@@ -121,8 +123,10 @@ def server():
         except NameError:
             pass
     finally:
+        DRONE.halt()
         socket.close()
 
 if __name__ == "__main__":
     main_init()
+    print("Done with init")
     server()
