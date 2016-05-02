@@ -1,4 +1,4 @@
-"""Setup for Mars Street View app."""
+"""Setup for DroneQuest app."""
 import os
 
 from setuptools import setup, find_packages
