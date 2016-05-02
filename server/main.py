@@ -4,7 +4,7 @@ import socket
 import os
 
 buffer_length = 1024
-PORT = 8000
+PORT = 3000
 IP = "0.0.0.0"
 
 ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../webroot/")
