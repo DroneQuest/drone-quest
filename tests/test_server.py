@@ -14,5 +14,5 @@ def test_ping(client):
     """Test that the client can send a message that we interpet as a ping."""
     client_module.send_message(client, '0x00')
     resp = client_module.get_reply(client)
-    assert resp == b'OK'
+    assert resp == 'OK'
     client_module.close(client)

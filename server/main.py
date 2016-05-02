@@ -27,8 +27,8 @@ TERMINATE = 0x10
 OK, FAIL = "OK", "FAIL"
 
 STATUS_CODES = {
-    OK: 0x00,  # Drone executed command correctly
-    FAIL: 0x01,  # Unknown error occurred
+    OK: "OK",  # Drone executed command correctly
+    FAIL: "FAIL",  # Unknown error occurred
 }
 
 
