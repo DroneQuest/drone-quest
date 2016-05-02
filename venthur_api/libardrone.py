@@ -130,6 +130,16 @@ class ARDrone(object):
         """
         self.speed = speed
 
+    def increase_speed(self):
+        """Increase the speed by an increment of 0.1."""
+        if (self.speed + 0.1) <= 1:
+            self.speed += 0.1
+
+    def decrease_speed(self):
+        """Decrease the speed by an increment of 0.1."""
+        if (self.speed - 0.1) >= 0:
+            self.speed -= 0.1
+
     def at(self, cmd, *args, **kwargs):
         """Wrapper for the low level at commands.
 
