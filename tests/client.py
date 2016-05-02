@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 """Dummy Test Client."""
 import socket
-
-
-PORT = 3000
-BUFFER_LENGTH = 1024
+from server.main import PORT, BUFFER_LENGTH
 
 
 def setup_socket():
