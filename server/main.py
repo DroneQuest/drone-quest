@@ -1,10 +1,12 @@
 # -*-coding:utf-8-*-
 """Handle server operations of reading incoming streams and echoing them"""
 import socket
+from venthur_api import libardrone
 
+DRONE = libardrone.ARDrone()
 BUFFER_LENGTH = 1024
 PORT = 3000
-IP = "0.0.0.0"
+IP = "127.0.0.1"
 
 PING = 0x00
 TAKE_OFF = 0x01
@@ -22,6 +24,27 @@ RESET = 0x0C
 CALIBRATE = 0x0D
 SPEED = 0x0E
 TERMINATE = 0x10
+
+COMMANDS_CENTRAL = {
+    PING: DRONE.ping,
+    TAKE_OFF: DRONE.takeoff,
+    LAND: DRONE.land,
+    HOVER: DRONE.hover,
+    MOVE_LEFT: DRONE.move_left,
+    MOVE_RIGHT: DRONE.move_right,
+    MOVE_UP: DRONE.move_up,
+    MOVE_DOWN: DRONE.move_down,
+    MOVE_FORWARD: DRONE.move_forward,
+    MOVE_BACKWARD: DRONE.move_backward,
+    TURN_LEFT: DRONE.turn_left,
+    TURN_RIGHT: DRONE.turn_right,
+    RESET: DRONE.reset,
+    CALIBRATE: DRONE.trim,
+    INCREASE_SPEED: DRONE.increase_speed,
+    DECREASE_SPEED: DRONE.decrease_speed,
+    TERMINATE: DRONE.halt
+}
+
 
 # Syntatic Sugars
 OK, FAIL = "OK", "FAIL"
@@ -68,6 +91,12 @@ def server_response(string, connection):
         connection.send(string)
     else:
         connection.send(string.encode('utf-8'))
+
+
+def parse_command(command):
+    """Convert the command to hexadecimals."""
+    command = hex(int(command, base=16))
+    DRONE[command]()
 
 
 def server():
