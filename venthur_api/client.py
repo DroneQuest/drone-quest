@@ -44,7 +44,7 @@ def get_reply(client):
 
 
 if __name__ == "__main__":
-    client = build_client(setup_socket())
     while True:
+        client = build_client(setup_socket())
         send_message(client, input("Command: "))
-    close(client)
+        close(client)
