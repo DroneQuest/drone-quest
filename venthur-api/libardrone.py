@@ -25,7 +25,7 @@ Python library for the AR.Drone.
 This module was tested with Python 2.6.6 and AR.Drone vanilla firmware 1.5.1.
 """
 
-
+from __future__ import unicode_literals
 import socket
 import struct
 import sys
@@ -51,6 +51,7 @@ class ARDrone(object):
     """
 
     def __init__(self):
+        """Connect to the drone and initialize the Python representation."""
         self.seq_nr = 1
         self.timer_t = 0.2
         self.com_watchdog_timer = threading.Timer(self.timer_t, self.commwdg)
@@ -169,22 +170,21 @@ class ARDrone(object):
         self.ipc_thread.stop()
         self.ipc_thread.join()
         self.lock.release()
-        
-    def move(self,lr, fb, vv, va):
-        """Makes the drone move (translate/rotate).
 
- 	   Parameters:
-	   lr -- left-right tilt: float [-1..1] negative: left, positive: right
-	   rb -- front-back tilt: float [-1..1] negative: forwards, positive:
-        	backwards
-	   vv -- vertical speed: float [-1..1] negative: go down, positive: rise
-	   va -- angular speed: float [-1..1] negative: spin left, positive: spin 
-        	right"""
+    def move(self, lr, fb, vv, va):
+        """Make the drone move: translate/rotate.
+        Parameters:
+        lr -- left-right tilt: float [-1..1] negative: left, positive: right
+        rb -- front-back tilt: float [-1..1] negative: forwards, positive:
+            backwards
+        vv -- vertical speed: float [-1..1] negative: go down, positive: rise
+        va -- angular speed: float [-1..1] negative: spin left, positive: spin
+            right"""
         self.at(at_pcmd, True, lr, fb, vv, va)
 
 
 ###############################################################################
-### Low level AT Commands
+# Low level AT Commands
 ###############################################################################
 
 def at_ref(seq, takeoff, emergency=False):
@@ -417,7 +417,7 @@ if __name__ == "__main__":
             try:
                 c = sys.stdin.read(1)
                 c = c.lower()
-                print "Got character", c
+                print("Got character", c)
                 if c == 'a':
                     drone.move_left()
                 if c == 'd':
@@ -452,4 +452,3 @@ if __name__ == "__main__":
         termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
         fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
         drone.halt()
-
