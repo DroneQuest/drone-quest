@@ -23,9 +23,12 @@ CALIBRATE = 0x0D
 SPEED = 0x0E
 TERMINATE = 0x10
 
+# Syntatic Sugars
+OK, FAIL = "OK", "FAIL"
+
 STATUS_CODES = {
-    "OK": 0x00,  # Drone executed command correctly
-    "FAIL": 0x01,  # Unknown error occurred
+    OK: 0x00,  # Drone executed command correctly
+    FAIL: 0x01,  # Unknown error occurred
 }
 
 
@@ -73,7 +76,7 @@ def server():
             connection, address = socket.accept()
             command = server_read(connection)
             print("recv:", command)
-            server_response()
+            server_response(STATUS_CODES[OK])
             connection.close()
     except KeyboardInterrupt:
         print("Closing the server!")
