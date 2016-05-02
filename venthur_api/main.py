@@ -5,7 +5,7 @@ import libardrone
 
 
 BUFFER_LENGTH = 1024
-PORT = 3000
+PORT = 8080
 IP = "127.0.0.1"
 
 PING = 0x00
@@ -69,10 +69,10 @@ def setup_server():
     return server
 
 
-def server_listen(server):
-    """Accept connections from the client."""
-    conn, addr = server.accept()
-    return (conn, addr)
+# def server_listen(server):
+#     """Accept connections from the client."""
+#     conn, addr = server.accept()
+#     return (conn, addr)
 
 
 def server_read(connection):
