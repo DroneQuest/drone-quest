@@ -2,8 +2,8 @@
 """Handle server operations of reading incoming streams and echoing them"""
 import socket
 
-buffer_length = 1024
-PORT = 3000
+BUFFER_LENGTH = 1024
+PORT = 3001
 IP = "0.0.0.0"
 
 PING = 0x00
@@ -22,6 +22,11 @@ RESET = 0x0C
 CALIBRATE = 0x0D
 SPEED = 0x0E
 TERMINATE = 0x10
+
+STATUS_CODES = {
+    "OK": 0x00,  # Drone executed command correctly
+    "FAIL": 0x01,  # Unknown error occurred
+}
 
 
 def setup_server():
@@ -45,9 +50,9 @@ def server_read(connection):
 
     string = ''.encode('utf-8')
     while True:
-        part = connection.recv(buffer_length)
+        part = connection.recv(BUFFER_LENGTH)
         string += part
-        if len(part) < buffer_length or len(part) == 0:
+        if len(part) < BUFFER_LENGTH or len(part) == 0:
             break
     return string.decode('utf-8')
 
@@ -68,6 +73,7 @@ def server():
             connection, address = socket.accept()
             command = server_read(connection)
             print("recv:", command)
+            server_response()
             connection.close()
     except KeyboardInterrupt:
         print("Closing the server!")
