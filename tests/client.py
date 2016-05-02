@@ -43,6 +43,8 @@ def get_reply(client):
             return (b''.join(chunks)).decode('utf-8').replace('\r', '')
 
 
-# if __name__ == "__main__":
-    # client = build_client(setup_socket())
-    # close(client)
+if __name__ == "__main__":
+    client = build_client(setup_socket())
+    while True:
+        send_message(client, input("Command: "))
+    close(client)
