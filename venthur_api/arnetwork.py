@@ -115,4 +115,3 @@ class IPCThread(threading.Thread):
     def stop(self):
         """Stop the IPCThread activity."""
         self.stopping = True
-

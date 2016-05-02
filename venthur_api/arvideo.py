@@ -405,7 +405,7 @@ def get_pheader(bitreader):
     # double resolution presolution-1 times
     width = width << presolution - 1
     height = height << presolution - 1
-    #print "width/height:", width, height
+    # print "width/height:", width, height
     ptype = bitreader.read(3)
     pquant = bitreader.read(5)
     pframe = bitreader.read(32)
@@ -577,4 +577,3 @@ if __name__ == '__main__':
         cProfile.run('main()')
     else:
         main()
-
