@@ -5,7 +5,7 @@ import libardrone
 
 
 BUFFER_LENGTH = 1024
-PORT = 8080
+PORT = 3000
 IP = "127.0.0.1"
 
 PING = 0x00
@@ -64,6 +64,7 @@ def setup_server():
     server = socket.socket(socket.AF_INET,
                            socket.SOCK_STREAM,
                            socket.IPPROTO_TCP)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((IP, PORT))
     server.listen(5)
     return server
@@ -97,7 +98,10 @@ def server_response(string, connection):
 def parse_command(command):
     """Convert the command to hexadecimals."""
     # command = hex(int(command, base=16))
-    return COMMANDS_CENTRAL[command]
+    try:
+        return COMMANDS_CENTRAL[command]
+    except KeyError:
+        return None
 
 
 def server():
@@ -112,9 +116,12 @@ def server():
             print("received command code: {}".format(command_code))
             command_name = parse_command(command_code)
             print("Doing command name: {}".format(command_name))
-            command = getattr(drone, command_name)
-            command()
-            server_response(str(STATUS_CODES[OK]), connection)
+            try:
+                command = getattr(drone, command_name)
+                command()
+                server_response(str(STATUS_CODES[OK]), connection)
+            except TypeError:
+                server_response(str(STATUS_CODES[FAIL]), connection)
             connection.close()
     except KeyboardInterrupt:
         print("Closing the server!")

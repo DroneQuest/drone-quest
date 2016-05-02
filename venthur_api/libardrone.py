@@ -328,8 +328,14 @@ def at(command, seq, params):
         elif type(p) == str:
             param_str += ',"'+p+'"'
     msg = "AT*%s=%i%s\r" % (command, seq, param_str)
+    # try:
+    #     msg.encode('utf-8')
+    # except AttributeError:
+    #     pass
+    # msg = bytes(msg, 'utf-8')
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(msg, ("192.168.1.1", ARDRONE_COMMAND_PORT))
+
 
 def f2i(f):
     """Interpret IEEE-754 floating-point value as signed integer.
