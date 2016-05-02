@@ -3,7 +3,7 @@
 import socket
 
 BUFFER_LENGTH = 1024
-PORT = 3001
+PORT = 3002
 IP = "0.0.0.0"
 
 PING = 0x00
@@ -76,7 +76,7 @@ def server():
             connection, address = socket.accept()
             command = server_read(connection)
             print("recv:", command)
-            server_response(STATUS_CODES[OK])
+            server_response(str(STATUS_CODES[OK]), connection)
             connection.close()
     except KeyboardInterrupt:
         print("Closing the server!")
