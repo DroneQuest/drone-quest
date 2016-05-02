@@ -1,13 +1,27 @@
 # -*-coding:utf-8-*-
 """Handle server operations of reading incoming streams and echoing them"""
 import socket
-import os
 
 buffer_length = 1024
 PORT = 3000
 IP = "0.0.0.0"
 
-ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)), "../webroot/")
+PING = 0x00
+TAKE_OFF = 0x01
+LAND = 0x02
+HOVER = 0x03
+MOVE_LEFT = 0x04
+MOVE_RIGHT = 0x05
+MOVE_UP = 0x06
+MOVE_DOWN = 0x07
+MOVE_FORWARD = 0x08
+MOVE_BACKWARD = 0x09
+TURN_LEFT = 0x0A
+TURN_RIGHT = 0x0B
+RESET = 0x0C
+CALIBRATE = 0x0D
+SPEED = 0x0E
+TERMINATE = 0x10
 
 
 def setup_server():
