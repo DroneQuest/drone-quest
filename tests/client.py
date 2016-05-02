@@ -27,7 +27,10 @@ def close(socket):
 def send_message(socket, message):
     """Send a scrubbed message to the server."""
     socket.connect(('127.0.0.1', PORT))
-    socket.sendall(message)
+    if hasattr(message, 'encode'):
+        socket.sendall(message.encode('utf-8'))
+    else:
+        socket.sendall(message)
 
 
 def get_reply(client):
