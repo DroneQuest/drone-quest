@@ -3,7 +3,7 @@
 import socket
 
 BUFFER_LENGTH = 1024
-PORT = 3002
+PORT = 3000
 IP = "0.0.0.0"
 
 PING = 0x00
