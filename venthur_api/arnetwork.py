@@ -28,8 +28,7 @@ import socket
 import threading
 import multiprocessing
 
-import libardrone
-import arvideo
+from venthur_api import libardrone, arvideo
 
 
 class ARDroneNetworkProcess(multiprocessing.Process):
@@ -116,4 +115,3 @@ class IPCThread(threading.Thread):
     def stop(self):
         """Stop the IPCThread activity."""
         self.stopping = True
-
