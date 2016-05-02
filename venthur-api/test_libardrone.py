@@ -18,10 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-
+from __future__ import unicode_literals
 import unittest
-
 import libardrone
+
 
 class LibardroneTestCase(unittest.TestCase):
     def test_f2i(self):
@@ -29,4 +29,3 @@ class LibardroneTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

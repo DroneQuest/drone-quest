@@ -29,7 +29,7 @@ in a way that it works also without psyco installed. On the author's
 development machine the speed up is from 2FPS w/o psyco to > 20 FPS w/ psyco.
 """
 
-
+from __future__ import unicode_literals
 import array
 import cProfile
 import datetime
@@ -39,7 +39,7 @@ import sys
 try:
     import psyco
 except ImportError:
-    print "Please install psyco for better video decoding performance."
+    print("Please install psyco for better video decoding performance.")
 
 
 # from zig-zag back to normal
@@ -448,9 +448,9 @@ def get_mb(bitreader, picture, width, offset):
             # re-order the pixels
             row = MB_ROW_MAP[i]
             col = MB_COL_MAP[i]
-            picture[offset + row*width + col] = ''.join((chr(r), chr(g), chr(b)))
+            picture[offset + row * width + col] = ''.join((chr(r), chr(g), chr(b)))
     else:
-        print "mbc was not zero"
+        print("mbc was not zero")
 
 
 def get_block(bitreader, has_coeff):
@@ -484,7 +484,7 @@ def get_block(bitreader, has_coeff):
                 bitreader.read(streamlen)
                 return inverse_dct(out_list)
             j = ZIG_ZAG_POSITIONS[i]
-            out_list[j] = tmp*IQUANT_TAB[j]
+            out_list[j] = tmp * IQUANT_TAB[j]
             i += 1
         #######################################################################
         bitreader.read(streamlen)
@@ -502,16 +502,16 @@ def get_gob(bitreader, picture, slicenr, width):
         bitreader.align()
         gobsc = bitreader.read(22)
         if gobsc == 0b0000000000000000111111:
-            print "weeeee"
+            print("weeeee")
             return False
-        elif (not (gobsc & 0b0000000000000000100000) or
-             (gobsc & 0b1111111111111111000000)):
-            print "Got wrong GOBSC, aborting.", bin(gobsc)
+        elif any((not (gobsc & 0b0000000000000000100000),
+                  (gobsc & 0b1111111111111111000000))):
+            print("Got wrong GOBSC, aborting.", bin(gobsc))
             return False
         _ = bitreader.read(5)
-    offset = slicenr*16*width
+    offset = slicenr * 16 * width
     for i in range(width / 16):
-        get_mb(bitreader, picture, width, offset+16*i)
+        get_mb(bitreader, picture, width, offset + 16 * i)
 
 
 def read_picture(data):
@@ -542,24 +542,25 @@ try:
     psyco.bind(inverse_dct)
     psyco.bind(read_picture)
 except NameError:
-    print "Unable to bind video decoding methods with psyco. Proceeding anyways, but video decoding will be slow!"
+    print("Unable to bind video decoding methods with psyco."
+          "Proceeding anyways, but video decoding will be slow!")
 
 
 def main():
     fh = open('framewireshark.raw', 'r')
-    #fh = open('videoframe.raw', 'r')
+    # fh = open('videoframe.raw', 'r')
     data = fh.read()
     fh.close()
     runs = 20
     t = 0
     for i in range(runs):
-        print '.',
+        print('.'),
         width, height, image, ti = read_picture(data)
-        #show_image(image, width, height)
+        # show_image(image, width, height)
         t += ti
-    print
-    print 'avg time:\t', t / runs, 'sec'
-    print 'avg fps:\t', 1 / (t / runs), 'fps'
+    print('')
+    print('avg time:\t', t / runs, 'sec')
+    print('avg fps:\t', 1 / (t / runs), 'fps')
     if 'image' in sys.argv:
         import pygame
         pygame.init()
