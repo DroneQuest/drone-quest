@@ -16,7 +16,7 @@ def enable_cors():
 @get('/navdata')
 def navdata():
     """Return packet of navdata."""
-    return "Navigational data: ..."
+    return drone.navdata
 
 
 @post('/do/<command>')
