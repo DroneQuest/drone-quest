@@ -1,6 +1,6 @@
 """Set up a bottle server to accept post requests commanding the drone."""
 from bottle import post, run, hook, response, get, abort
-
+import json
 from venthur_api import libardrone
 
 
@@ -17,15 +17,16 @@ def enable_cors():
 def imgdata():
     """Return the current drone image."""
     print(type(drone.image))
+    response.content_type = 'image/x-rgb'
     return drone.image
 
 
 @get('/navdata')
 def navdata():
     """Return packet of navdata."""
-    response.content_type = 'image/x-rgb'
+    response.content_type = 'application/json'
     print(drone.navdata)
-    return drone.navdata
+    return json.dumps(drone.navdata)
 
 
 @post('/do/<command>')
