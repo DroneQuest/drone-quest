@@ -16,6 +16,18 @@ The end goal of this project is to hopefully be able to fly a drone using a Leap
 - Send commands via the front-end web application we have created
 - Use VR goggles that will connect to the drone cameras 
 
+
+## Installation
+```
+$ sudo apt-get install python-dev
+$ git clone https://github.com/DroneQuest/drone-quest
+$ python setup.py install
+
+## Getting started
+
+# command line entry point
+
+
 Sources: 
 - [Tutorial Site](http://www.playsheep.de/drone/)
 - [Useful Github Repo](https://github.com/venthur/python-ardrone) Written by Bastian Venthur
@@ -27,7 +39,7 @@ Project Members
 - Will Weatherford (Python)
 - Munir Ibrahim (Python)
 
-<a href="https://flattr.com/submit/auto?user_id=venthur&url=http%3A%2F%2Fgithub.com%2Fventhur%2Fpython-ardrone" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0"></a>
+<!-- <a href="https://flattr.com/submit/auto?user_id=venthur&url=http%3A%2F%2Fgithub.com%2Fventhur%2Fpython-ardrone" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0"></a> -->
 
 [![Video of the drone in action](https://img.youtube.com/vi/2HEV37GbUow/0.jpg)](https://www.youtube.com/watch?v=2HEV37GbUow "Click to go to the video.")
 
