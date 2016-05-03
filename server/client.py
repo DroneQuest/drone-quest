@@ -2,7 +2,7 @@
 """Dummy Test Client."""
 import socket
 try:
-    from venthur_api.main import PORT, BUFFER_LENGTH
+    from server.main import PORT, BUFFER_LENGTH
 except ImportError:
     import main
     PORT, BUFFER_LENGTH = main.PORT, main.BUFFER_LENGTH
