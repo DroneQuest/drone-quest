@@ -61,7 +61,11 @@ class ARDrone(object):
         self.video_pipe, video_pipe_other = multiprocessing.Pipe()
         self.nav_pipe, nav_pipe_other = multiprocessing.Pipe()
         self.com_pipe, com_pipe_other = multiprocessing.Pipe()
-        self.network_process = arnetwork.ARDroneNetworkProcess(nav_pipe_other, video_pipe_other, com_pipe_other)
+        self.network_process = arnetwork.ARDroneNetworkProcess(
+            nav_pipe_other,
+            video_pipe_other,
+            com_pipe_other
+        )
         self.network_process.start()
         self.ipc_thread = arnetwork.IPCThread(self)
         self.ipc_thread.start()
@@ -182,7 +186,8 @@ class ARDrone(object):
         self.lock.release()
 
     def move(self, lr, fb, vv, va):
-        """Make the drone move: translate/rotate.
+        """
+        Make the drone move: translate/rotate.
         Parameters:
         lr -- left-right tilt: float [-1..1] negative: left, positive: right
         rb -- front-back tilt: float [-1..1] negative: forwards, positive:
@@ -320,20 +325,20 @@ def at(command, seq, params):
     """
     param_str = ''
     for p in params:
-        if type(p) == int:
+        if isinstance(p, int):
             param_str += ",%d" % p
-        elif type(p) == float:
+        elif isinstance(p, float):
             param_str += ",%d" % f2i(p)
-        elif type(p) == str:
-            param_str += ',"'+p+'"'
+        elif isinstance(p, str):
+            param_str += ',"' + p + '"'
     msg = "AT*%s=%i%s\r" % (command, seq, param_str)
-    try:
-        msg.encode('utf-8')
-    except AttributeError:
-        pass
+    # try:
+    #     msg.encode('utf-8')
+    # except AttributeError:
+    #     pass
     msg = bytes(msg, 'utf-8')
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(msg, ("192.168.1.1", ARDRONE_COMMAND_PORT))
+    sock.sendto(msg, (ARDRONE_ADDRESS, ARDRONE_COMMAND_PORT))
 
 
 def f2i(f):
