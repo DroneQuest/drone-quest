@@ -35,4 +35,4 @@ def do(command):
         return 'Bad Command: {}'.format(command)
 
 
-run(host='localhost', port=8080)
+run(host='127.0.0.1', port=8080)
