@@ -29,7 +29,6 @@ in a way that it works also without psyco installed. On the author's
 development machine the speed up is from 2FPS w/o psyco to > 20 FPS w/ psyco.
 """
 
-# from __future__ import unicode_literals
 import array
 import cProfile
 import datetime
