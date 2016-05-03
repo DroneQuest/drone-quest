@@ -1,22 +1,18 @@
-from bottle import route, run
-
-from client import build_client, setup_socket, send_message, close
+"""Set up a bottle server to accept post requests commanding the drone."""
+from bottle import post, run
 import libardrone
-import time
 
 drone = libardrone.ARDrone()
 
 
-@route('/do/<command>')
+@post('/do/<command>')
 def do(command):
+    """Execute the given command from the route."""
+    try:
+        getattr(drone, command)()
+        return 'Command executed'
+    except AttributeError:
+        return 'Bad Command'
 
-    getattr(drone, command)()
 
-    return 'Success'
-
-
-try:
-    run(host='localhost', port=8080)
-except:
-    drone.land()
-    drone.halt()
+run(host='localhost', port=8080)
