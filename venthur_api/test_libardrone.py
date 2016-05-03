@@ -18,10 +18,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-
 import unittest
+try:
+    from venthur_api import libardrone
+except ImportError:
+    import libardrone
 
-import libardrone
 
 class LibardroneTestCase(unittest.TestCase):
     def test_f2i(self):
@@ -29,4 +31,3 @@ class LibardroneTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

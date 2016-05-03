@@ -29,7 +29,6 @@ in a way that it works also without psyco installed. On the author's
 development machine the speed up is from 2FPS w/o psyco to > 20 FPS w/ psyco.
 """
 
-
 import array
 import cProfile
 import datetime
@@ -39,7 +38,7 @@ import sys
 try:
     import psyco
 except ImportError:
-    print "Please install psyco for better video decoding performance."
+    print("Please install psyco for better video decoding performance.")
 
 
 # from zig-zag back to normal
@@ -65,7 +64,7 @@ IQUANT_TAB = array.array('B',
      17, 19, 21, 23, 25, 27, 29, 31))
 
 # Used for upscaling the 8x8 b- and r-blocks to 16x16
-SCALE_TAB = array.array('B', 
+SCALE_TAB = array.array('B',
     ( 0,  0,  1,  1,  2,  2,  3,  3,
       0,  0,  1,  1,  2,  2,  3,  3,
       8,  8,  9,  9, 10, 10, 11, 11,
@@ -155,7 +154,7 @@ MB_TO_GOB_MAP = array.array('B',
      216, 217, 218, 219, 220, 221, 222, 223,
      232, 233, 234, 235, 236, 237, 238, 239,
      248, 249, 250, 251, 252, 253, 254, 255])
-MB_ROW_MAP = array.array('B', [i / 16 for i in MB_TO_GOB_MAP])
+MB_ROW_MAP = array.array('B', [i // 16 for i in MB_TO_GOB_MAP])
 MB_COL_MAP = array.array('B', [i % 16 for i in MB_TO_GOB_MAP])
 
 # An array of zeros. It is much faster to take the zeros from here than to
@@ -405,7 +404,7 @@ def get_pheader(bitreader):
     # double resolution presolution-1 times
     width = width << presolution - 1
     height = height << presolution - 1
-    #print "width/height:", width, height
+    # print "width/height:", width, height
     ptype = bitreader.read(3)
     pquant = bitreader.read(5)
     pframe = bitreader.read(32)
@@ -448,9 +447,9 @@ def get_mb(bitreader, picture, width, offset):
             # re-order the pixels
             row = MB_ROW_MAP[i]
             col = MB_COL_MAP[i]
-            picture[offset + row*width + col] = ''.join((chr(r), chr(g), chr(b)))
+            picture[offset + row * width + col] = ''.join((chr(r), chr(g), chr(b)))
     else:
-        print "mbc was not zero"
+        print("mbc was not zero")
 
 
 def get_block(bitreader, has_coeff):
@@ -484,7 +483,7 @@ def get_block(bitreader, has_coeff):
                 bitreader.read(streamlen)
                 return inverse_dct(out_list)
             j = ZIG_ZAG_POSITIONS[i]
-            out_list[j] = tmp*IQUANT_TAB[j]
+            out_list[j] = tmp * IQUANT_TAB[j]
             i += 1
         #######################################################################
         bitreader.read(streamlen)
@@ -502,16 +501,16 @@ def get_gob(bitreader, picture, slicenr, width):
         bitreader.align()
         gobsc = bitreader.read(22)
         if gobsc == 0b0000000000000000111111:
-            print "weeeee"
+            print("weeeee")
             return False
-        elif (not (gobsc & 0b0000000000000000100000) or
-             (gobsc & 0b1111111111111111000000)):
-            print "Got wrong GOBSC, aborting.", bin(gobsc)
+        elif any((not (gobsc & 0b0000000000000000100000),
+                  (gobsc & 0b1111111111111111000000))):
+            print("Got wrong GOBSC, aborting.", bin(gobsc))
             return False
         _ = bitreader.read(5)
-    offset = slicenr*16*width
+    offset = slicenr * 16 * width
     for i in range(width / 16):
-        get_mb(bitreader, picture, width, offset+16*i)
+        get_mb(bitreader, picture, width, offset + 16 * i)
 
 
 def read_picture(data):
@@ -542,24 +541,25 @@ try:
     psyco.bind(inverse_dct)
     psyco.bind(read_picture)
 except NameError:
-    print "Unable to bind video decoding methods with psyco. Proceeding anyways, but video decoding will be slow!"
+    print("Unable to bind video decoding methods with psyco."
+          "Proceeding anyways, but video decoding will be slow!")
 
 
 def main():
     fh = open('framewireshark.raw', 'r')
-    #fh = open('videoframe.raw', 'r')
+    # fh = open('videoframe.raw', 'r')
     data = fh.read()
     fh.close()
     runs = 20
     t = 0
     for i in range(runs):
-        print '.',
+        print('.'),
         width, height, image, ti = read_picture(data)
-        #show_image(image, width, height)
+        # show_image(image, width, height)
         t += ti
-    print
-    print 'avg time:\t', t / runs, 'sec'
-    print 'avg fps:\t', 1 / (t / runs), 'fps'
+    print('')
+    print('avg time:\t', t / runs, 'sec')
+    print('avg fps:\t', 1 / (t / runs), 'fps')
     if 'image' in sys.argv:
         import pygame
         pygame.init()
@@ -576,4 +576,3 @@ if __name__ == '__main__':
         cProfile.run('main()')
     else:
         main()
-
