@@ -19,7 +19,10 @@
 # THE SOFTWARE.
 
 import unittest
-from venthur_api import libardrone
+try:
+    from venthur_api import libardrone
+except ImportError:
+    import libardrone
 
 
 class LibardroneTestCase(unittest.TestCase):
