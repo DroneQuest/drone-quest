@@ -18,10 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from __future__ import unicode_literals
 import unittest
-# from venthur_api import libardrone
-import libardrone
+try:
+    from venthur_api import libardrone
+except ImportError:
+    import libardrone
 
 
 class LibardroneTestCase(unittest.TestCase):

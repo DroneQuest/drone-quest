@@ -1,7 +1,10 @@
 """Set up a bottle server to accept post requests commanding the drone."""
 from bottle import post, run, hook, response
-import libardrone
 # import os
+try:
+    from venthur_api import libardrone
+except ImportError:
+    import libardrone
 
 drone = libardrone.ARDrone()
 
@@ -14,6 +17,7 @@ drone = libardrone.ARDrone()
 
 @hook('after_request')
 def enable_cors():
+    """Allow control headers."""
     response.headers['Access-Control-Allow-Origin'] = '*'
 
 
