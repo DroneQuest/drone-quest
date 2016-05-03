@@ -9,10 +9,13 @@ drone = libardrone.ARDrone()
 def do(command):
     """Execute the given command from the route."""
     try:
+        print('Command received: {}'.format(command))
         getattr(drone, command)()
-        return 'Command executed'
+        print('Command executed: {}'.format(command))
+        return 'Command executed: {}'.format(command)
     except AttributeError:
-        return 'Bad Command'
+        print('Bad Command: {}'.format(command))
+        return 'Bad Command: {}'.format(command)
 
 
 run(host='localhost', port=8080)
