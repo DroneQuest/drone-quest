@@ -34,9 +34,11 @@ try:
 except ImportError:
     import arvideo
 
+ARDRONE_ADDRESS = '192.168.1.1'
 ARDRONE_NAVDATA_PORT = 5554
 ARDRONE_VIDEO_PORT = 5555
 ARDRONE_COMMAND_PORT = 5556
+INIT_MSG = b'\x01\x00\x00\x00'
 
 
 class ARDroneNetworkProcess(multiprocessing.Process):
@@ -56,12 +58,12 @@ class ARDroneNetworkProcess(multiprocessing.Process):
         video_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         video_socket.setblocking(0)
         video_socket.bind(('', ARDRONE_VIDEO_PORT))
-        video_socket.sendto("\x01\x00\x00\x00", ('192.168.1.1', ARDRONE_VIDEO_PORT))
+        video_socket.sendto(INIT_MSG, (ARDRONE_ADDRESS, ARDRONE_VIDEO_PORT))
 
         nav_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         nav_socket.setblocking(0)
         nav_socket.bind(('', ARDRONE_NAVDATA_PORT))
-        nav_socket.sendto("\x01\x00\x00\x00", ('192.168.1.1', ARDRONE_NAVDATA_PORT))
+        nav_socket.sendto(INIT_MSG, (ARDRONE_ADDRESS, ARDRONE_NAVDATA_PORT))
 
         stopping = False
         while not stopping:
@@ -167,12 +169,12 @@ def decode_navdata(packet):
     offset += struct.calcsize("IIII")
     while 1:
         try:
-            id_nr, size =  struct.unpack_from("HH", packet, offset)
+            id_nr, size = struct.unpack_from("HH", packet, offset)
             offset += struct.calcsize("HH")
         except struct.error:
             break
         values = []
-        for i in range(size-struct.calcsize("HH")):
+        for i in range(size - struct.calcsize("HH")):
             values.append(struct.unpack_from("c", packet, offset)[0])
             offset += struct.calcsize("c")
         # navdata_tag_t in navdata-common.h

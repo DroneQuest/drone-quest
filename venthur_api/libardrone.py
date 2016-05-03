@@ -37,7 +37,7 @@ from venthur_api import arnetwork
 
 __author__ = "Bastian Venthur"
 
-
+ARDRONE_ADDRESS = arnetwork.ARDRONE_ADDRESS
 ARDRONE_NAVDATA_PORT = arnetwork.ARDRONE_NAVDATA_PORT
 ARDRONE_VIDEO_PORT = arnetwork.ARDRONE_VIDEO_PORT
 ARDRONE_COMMAND_PORT = arnetwork.ARDRONE_COMMAND_PORT
@@ -327,11 +327,11 @@ def at(command, seq, params):
         elif type(p) == str:
             param_str += ',"'+p+'"'
     msg = "AT*%s=%i%s\r" % (command, seq, param_str)
-    # try:
-    #     msg.encode('utf-8')
-    # except AttributeError:
-    #     pass
-    # msg = bytes(msg, 'utf-8')
+    try:
+        msg.encode('utf-8')
+    except AttributeError:
+        pass
+    msg = bytes(msg, 'utf-8')
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(msg, ("192.168.1.1", ARDRONE_COMMAND_PORT))
 
