@@ -6,10 +6,11 @@ except ImportError:
 import time
 import Leap
 import sys
+import requests
 # from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
-
-drone = libardrone.ARDrone()
+NET_LOC = "http://127.0.0.1:8083"
+# drone = libardrone.ARDrone()
 
 
 class DroneListener(Leap.Listener):
@@ -60,13 +61,17 @@ class DroneListener(Leap.Listener):
         # else:
         #     self.hand_opened(hand)
 
-        # if self.flying == False:
         #     if len(hands.fingers) <= 1:
-        if hand.palm_velocity.y > 100:
-            drone.takeoff()
-            drone.hover()
+        # if hand.palm_velocity.y > 100:
+        if self.flying is False:
+            if hand.grab_strength == 0:
+                requests.get(NET_LOC + "/do/takeoff")
+                requests.get(NET_LOC + "/do/hover")
+                self.flying = True
+
         if hand.palm_velocity.y <= -100:
-            drone.land()
+            requests.get(NET_LOC + "/do/land")
+            self.flying = False
 
 
 if __name__ == '__main__':
