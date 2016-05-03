@@ -1,5 +1,5 @@
 """Set up a bottle server to accept post requests commanding the drone."""
-from bottle import post, run, hook, response, get
+from bottle import post, run, hook, response, get, abort
 
 from venthur_api import libardrone
 
@@ -16,7 +16,7 @@ def enable_cors():
 @get('/navdata')
 def navdata():
     """Return packet of navdata."""
-    return "Navigational data: ..."
+    return drone.navdata
 
 
 @post('/do/<command>')
@@ -28,9 +28,12 @@ def do(command):
         print('Command executed: {}'.format(command))
         return 'Command executed: {}'.format(command)
     except AttributeError:
-        # return 404 instead
         print('Bad Command: {}'.format(command))
-        return 'Bad Command: {}'.format(command)
+        abort(404, 'Bad Command: {}'.format(command))
 
 
-run(host='127.0.0.1', port=8080)
+try:
+    run(host='127.0.0.1', port=8080)
+finally:
+    drone.land()
+    drone.halt()
