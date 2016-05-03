@@ -186,15 +186,16 @@ class ARDrone(object):
         self.lock.release()
 
     def move(self, lr, fb, vv, va):
-        """
-        Make the drone move: translate/rotate.
+        """Make the drone move: translate/rotate.
+
         Parameters:
         lr -- left-right tilt: float [-1..1] negative: left, positive: right
         rb -- front-back tilt: float [-1..1] negative: forwards, positive:
             backwards
         vv -- vertical speed: float [-1..1] negative: go down, positive: rise
         va -- angular speed: float [-1..1] negative: spin left, positive: spin
-            right"""
+            right
+        """
         self.at(at_pcmd, True, lr, fb, vv, va)
 
 
@@ -203,8 +204,7 @@ class ARDrone(object):
 ###############################################################################
 
 def at_ref(seq, takeoff, emergency=False):
-    """
-    Basic behaviour of the drone: take-off/landing, emergency stop/reset)
+    """Basic behaviour of the drone: take-off/landing, emergency stop/reset).
 
     Parameters:
     seq -- sequence number
@@ -218,9 +218,9 @@ def at_ref(seq, takeoff, emergency=False):
         p += 0b0100000000
     at("REF", seq, [p])
 
+
 def at_pcmd(seq, progressive, lr, fb, vv, va):
-    """
-    Makes the drone move (translate/rotate).
+    """Make the drone move (translate/rotate).
 
     Parameters:
     seq -- sequence number
@@ -238,18 +238,18 @@ def at_pcmd(seq, progressive, lr, fb, vv, va):
     p = 1 if progressive else 0
     at("PCMD", seq, [p, float(lr), float(fb), float(vv), float(va)])
 
+
 def at_ftrim(seq):
-    """
-    Tell the drone it's lying horizontally.
+    """Tell the drone it's lying horizontally.
 
     Parameters:
     seq -- sequence number
     """
     at("FTRIM", seq, [])
 
+
 def at_zap(seq, stream):
-    """
-    Selects which video stream to send on the video UDP port.
+    """Select which video stream to send on the video UDP port.
 
     Parameters:
     seq -- sequence number
@@ -258,20 +258,20 @@ def at_zap(seq, stream):
     # FIXME: improve parameters to select the modes directly
     at("ZAP", seq, [stream])
 
+
 def at_config(seq, option, value):
     """Set configuration parameters of the drone."""
     at("CONFIG", seq, [str(option), str(value)])
 
+
 def at_comwdg(seq):
-    """
-    Reset communication watchdog.
-    """
+    """Reset communication watchdog."""
     # FIXME: no sequence number
     at("COMWDG", seq, [])
 
+
 def at_aflight(seq, flag):
-    """
-    Makes the drone fly autonomously.
+    """Make the drone fly autonomously.
 
     Parameters:
     seq -- sequence number
@@ -279,9 +279,9 @@ def at_aflight(seq, flag):
     """
     at("AFLIGHT", seq, [flag])
 
+
 def at_pwm(seq, m1, m2, m3, m4):
-    """
-    Sends control values directly to the engines, overriding control loops.
+    """Send control values directly to the engines, overriding control loops.
 
     Parameters:
     seq -- sequence number
@@ -293,9 +293,9 @@ def at_pwm(seq, m1, m2, m3, m4):
     # FIXME: what type do mx have?
     pass
 
+
 def at_led(seq, anim, f, d):
-    """
-    Control the drones LED.
+    """Control the drone's LED.
 
     Parameters:
     seq -- sequence number
@@ -305,9 +305,9 @@ def at_led(seq, anim, f, d):
     """
     pass
 
+
 def at_anim(seq, anim, d):
-    """
-    Makes the drone execute a predefined movement (animation).
+    """Make the drone execute a predefined movement (animation).
 
     Parameters:
     seq -- sequcence number
@@ -316,8 +316,10 @@ def at_anim(seq, anim, d):
     """
     at("ANIM", seq, [anim, d])
 
+
 def at(command, seq, params):
-    """
+    """Send command directly to the drone.
+
     Parameters:
     command -- the command
     seq -- the sequence number
@@ -348,6 +350,7 @@ def f2i(f):
     f -- floating point value
     """
     return struct.unpack('i', struct.pack('f', f))[0]
+
 
 if __name__ == "__main__":
 
