@@ -32,5 +32,8 @@ def do(command):
         print('Bad Command: {}'.format(command))
         return 'Bad Command: {}'.format(command)
 
-
-run(host='127.0.0.1', port=8080)
+try:
+    run(host='127.0.0.1', port=8080)
+finally:
+    drone.land()
+    drone.halt()
