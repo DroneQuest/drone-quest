@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 """Dummy Test Client."""
 import socket
-try:
-    from server.socket_drone import PORT, BUFFER_LENGTH
-except ImportError:
-    import socket_drone
-    PORT, BUFFER_LENGTH = socket_drone.PORT, socket_drone.BUFFER_LENGTH
+from server.socket_drone import PORT, BUFFER_LENGTH
 
 
 def setup_socket():

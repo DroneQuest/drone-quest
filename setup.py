@@ -10,6 +10,7 @@ from setuptools import setup, find_packages
 #     CHANGES = f.read()
 
 REQUIRES = [
+    'bottle',
 ]
 TEST = [
     'pytest',
