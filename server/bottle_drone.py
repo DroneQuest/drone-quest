@@ -16,6 +16,14 @@ def enable_cors():
 @get('/navdata')
 def navdata():
     """Return packet of navdata."""
+    print(type(drone.image))
+    return drone.image
+
+
+@get('/imgdata')
+def navdata():
+    """Return packet of navdata."""
+    print(drone.navdata)
     return drone.navdata
 
 

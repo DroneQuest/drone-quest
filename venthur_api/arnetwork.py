@@ -29,10 +29,7 @@ import struct
 import threading
 import multiprocessing
 
-try:
-    from venthur_api import arvideo
-except ImportError:
-    import arvideo
+from venthur_api import arvideo
 
 ARDRONE_ADDRESS = '192.168.1.1'
 ARDRONE_NAVDATA_PORT = 5554
@@ -54,6 +51,7 @@ class ARDroneNetworkProcess(multiprocessing.Process):
         self.nav_pipe = nav_pipe
         self.video_pipe = video_pipe
         self.com_pipe = com_pipe
+
 
     def run(self):
         video_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
