@@ -1,20 +1,23 @@
 """Set up a bottle server to accept post requests commanding the drone."""
-from bottle import post, run, route
+from bottle import post, run, hook, response
 import libardrone
-import os
+# import os
 
 drone = libardrone.ARDrone()
 
-HTML_LOC = '/home/will/401d2/drone-client/dist'
+
+# @route('/')
+# def home():
+#     with open(os.path.join(HTML_LOC, 'index.html')) as html:
+#         return html
 
 
-@route('/')
-def home():
-    with open(os.path.join(HTML_LOC, 'index.html')) as html:
-        return html
+@hook('after_request')
+def enable_cors():
+    response.headers['Access-Control-Allow-Origin'] = '*'
 
 
-@route('/do/<command>')
+@post('/do/<command>')
 def do(command):
     """Execute the given command from the route."""
     try:
@@ -23,6 +26,7 @@ def do(command):
         print('Command executed: {}'.format(command))
         return 'Command executed: {}'.format(command)
     except AttributeError:
+        # return 404 instead
         print('Bad Command: {}'.format(command))
         return 'Bad Command: {}'.format(command)
 
