@@ -182,17 +182,16 @@ F3 = CONST_BITS + PASS1_BITS + 3
 
 # tuning parameter for get_block
 TRIES = 16
-MASK = 2**(TRIES*32)-1
-SHIFT = 32*(TRIES-1)
+MASK = 2 ** (TRIES * 32) - 1
+SHIFT = 32 * (TRIES - 1)
 
 
 def _first_half(data):
-    """Helper function used to precompute the zero values in a 12 bit datum.
-    """
+    """Precompute the zero values in a 12 bit datum."""
     # data has to be 12 bits wide
     streamlen = 0
     # count the zeros
-    zerocount = CLZLUT[data >> 4];
+    zerocount = CLZLUT[data >> 4]
     data = (data << (zerocount + 1)) & 0b111111111111
     streamlen += zerocount + 1
     # get number of remaining bits to read
@@ -207,8 +206,7 @@ def _first_half(data):
 
 
 def _second_half(data):
-    """Helper function to precompute the nonzeror values in a 15 bit datum.
-    """
+    """Precompute the nonzeror values in a 15 bit datum."""
     # data has to be 15 bits wide
     streamlen = 0
     zerocount = CLZLUT[data >> 7]
@@ -256,7 +254,8 @@ class BitReader(object):
         # Read enough bits into chunk so we have at least nbits available
         while nbits > self.bits_left:
             try:
-                self.chunk = (self.chunk << 32) | struct.unpack_from('<I', self.packet, self.offset)[0]
+                part = struct.unpack_from('<I', self.packet, self.offset)[0]
+                self.chunk = (self.chunk << 32) | part
             except struct.error:
                 self.chunk <<= 32
             self.offset += 4
@@ -277,18 +276,20 @@ class BitReader(object):
 
 
 def inverse_dct(block):
-    """Inverse discrete cosine transform.
-    """
+    """Inverse discrete cosine transform."""
     workspace = ZEROS[0:64]
     data = ZEROS[0:64]
     for pointer in range(8):
-        if (block[pointer + 8] == 0 and block[pointer + 16] == 0 and
-            block[pointer + 24] == 0 and block[pointer + 32] == 0 and
-            block[pointer + 40] == 0 and block[pointer + 48] == 0 and
-            block[pointer + 56] == 0):
+        if all([block[pointer + 8] == 0,
+                block[pointer + 16] == 0,
+                block[pointer + 24] == 0,
+                block[pointer + 32] == 0,
+                block[pointer + 40] == 0,
+                block[pointer + 48] == 0,
+                block[pointer + 56] == 0]):
             dcval = block[pointer] << PASS1_BITS
             for i in range(8):
-                workspace[pointer + i*8] = dcval
+                workspace[pointer + i * 8] = dcval
             continue
 
         z2 = block[pointer + 16]
@@ -447,7 +448,8 @@ def get_mb(bitreader, picture, width, offset):
             # re-order the pixels
             row = MB_ROW_MAP[i]
             col = MB_COL_MAP[i]
-            picture[offset + row * width + col] = ''.join((chr(r), chr(g), chr(b)))
+            chars = (chr(r), chr(g), chr(b))
+            picture[offset + row * width + col] = b''.join(chars)
     else:
         print("mbc was not zero")
 
@@ -465,7 +467,7 @@ def get_block(bitreader, has_coeff):
         return inverse_dct(out_list)
     i = 1
     while 1:
-        _ = bitreader.read(32*TRIES, False)
+        _ = bitreader.read(32 * TRIES, False)
         streamlen = 0
         #######################################################################
         for j in range(TRIES):
@@ -523,14 +525,14 @@ def read_picture(data):
     width, height = get_pheader(bitreader)
     slices = height / 16
     blocks = width / 16
-    image = [0 for i in range(width*height)]
+    image = [0 for i in range(width * height)]
     for i in range(0, slices):
         get_gob(bitreader, image, i, width)
     bitreader.align()
     eos = bitreader.read(22)
     assert(eos == 0b0000000000000000111111)
     t2 = datetime.datetime.now()
-    return width, height, ''.join(image), (t2 - t).microseconds / 1000000.
+    return width, height, b''.join(image), (t2 - t).microseconds / 1000000.
 
 
 try:
@@ -546,6 +548,7 @@ except NameError:
 
 
 def main():
+    """Show video from command line."""
     fh = open('framewireshark.raw', 'r')
     # fh = open('videoframe.raw', 'r')
     data = fh.read()
