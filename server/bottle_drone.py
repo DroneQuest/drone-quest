@@ -1,24 +1,22 @@
 """Set up a bottle server to accept post requests commanding the drone."""
-from bottle import post, run, hook, response
-# import os
-try:
-    from venthur_api import libardrone
-except ImportError:
-    import libardrone
+from bottle import post, run, hook, response, get
+
+from venthur_api import libardrone
+
 
 drone = libardrone.ARDrone()
-
-
-# @route('/')
-# def home():
-#     with open(os.path.join(HTML_LOC, 'index.html')) as html:
-#         return html
 
 
 @hook('after_request')
 def enable_cors():
     """Allow control headers."""
     response.headers['Access-Control-Allow-Origin'] = '*'
+
+
+@get('/navdata')
+def navdata():
+    """Return packet of navdata."""
+    return "Navigational data: ..."
 
 
 @post('/do/<command>')

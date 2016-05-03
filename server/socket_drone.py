@@ -2,10 +2,7 @@
 """Handle server operations of reading incoming streams and echoing them."""
 from __future__ import absolute_import
 import socket
-try:
-    from venthur_api import libardrone
-except ImportError:
-    import libardrone
+from venthur_api import libardrone
 
 
 BUFFER_LENGTH = 1024
