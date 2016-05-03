@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Dummy Test Client."""
 import socket
-from main import PORT, BUFFER_LENGTH
+from venthur_api.main import PORT, BUFFER_LENGTH
 
 
 def setup_socket():

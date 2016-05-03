@@ -33,7 +33,7 @@ import threading
 import multiprocessing
 
 # from venthur_api import arnetwork
-import arnetwork
+from venthur_api import arnetwork
 
 
 __author__ = "Bastian Venthur"

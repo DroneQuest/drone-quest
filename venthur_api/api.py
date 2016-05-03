@@ -1,6 +1,6 @@
 """Set up a bottle server to accept post requests commanding the drone."""
 from bottle import post, run
-import libardrone
+from venthur_api import libardrone
 
 drone = libardrone.ARDrone()
 

@@ -1,7 +1,7 @@
 # -*-coding:utf-8-*-
 """Handle server operations of reading incoming streams and echoing them."""
 import socket
-import libardrone
+from venthur_api import libardrone
 
 
 BUFFER_LENGTH = 1024

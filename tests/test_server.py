@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test the drone server."""
 import pytest
-from tests import client as client_module
+from venthur_api import client as client_module
 
 
 COMMAND_TESTS_PASS = [(hex(message), "OK") for message in range(16)]

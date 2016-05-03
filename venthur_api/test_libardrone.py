@@ -20,8 +20,8 @@
 
 from __future__ import unicode_literals
 import unittest
-# from venthur_api import libardrone
-import libardrone
+from venthur_api import libardrone
+# import libardrone
 
 
 class LibardroneTestCase(unittest.TestCase):
