@@ -13,16 +13,17 @@ def enable_cors():
     response.headers['Access-Control-Allow-Origin'] = '*'
 
 
-@get('/navdata')
-def navdata():
-    """Return packet of navdata."""
+@get('/imgdata')
+def imgdata():
+    """Return the current drone image."""
     print(type(drone.image))
     return drone.image
 
 
-@get('/imgdata')
+@get('/navdata')
 def navdata():
     """Return packet of navdata."""
+    response.content_type = 'image/x-rgb'
     print(drone.navdata)
     return drone.navdata
 
