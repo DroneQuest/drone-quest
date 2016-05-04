@@ -60,6 +60,16 @@ class MockLeap(object):
         TYPE_SWIPE = "swipe"
         TYPE_KEY_TAP = "key tap"
 
+
+class Requests(object):
+
+    def get(url):
+        return None
+
+    def post(url):
+        return None
+
+
 @pytest.fixture()
 def drone():
     return MockDrone()
@@ -79,3 +89,8 @@ def controller():
 def drone_listener():
     from leap_motion.ar_leap import DroneListener
     return DroneListener()
+
+
+@pytest.fixture()
+def requests():
+    return Requests
