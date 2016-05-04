@@ -39,6 +39,7 @@ class MockHands(object):
 class MockFrame(object):
     hands = [MockHands(), MockHands()]
 
+
 class MockController(object):
 
     class config(object):
@@ -51,6 +52,10 @@ class MockController(object):
     def frame(self):
         return MockFrame()
 
+
+class MockLeap(object):
+    class Listener(object):
+        pass
 
 
 @pytest.fixture()
