@@ -1,5 +1,5 @@
 """Set up a bottle server to accept post requests commanding the drone."""
-from bottle import post, run, hook, response, get, abort
+from bottle import post, run, hook, get, abort
 
 from venthur_api import libardrone
 from server.socket_drone import PORT
