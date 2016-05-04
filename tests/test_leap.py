@@ -140,6 +140,38 @@ def test_do_not_land_is_too_slow(controller, drone_listener, velocity_y):
     assert history == []
 
 
+@pytest.mark.parametrize("velocity_y", [vy for vy in range(-10, 10)])
+def test_hover(controller, drone_listener, velocity_y):
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_velocity(0, velocity_y, 0)
+    controller._test_only_set_grab_strength(0)
+    drone_listener.on_frame(controller)
+    assert history == ['hover']
+
+
+@pytest.mark.parametrize("velocity_y", [-20, -15, 15, 20])
+def test_hover(controller, drone_listener, velocity_y):
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_velocity(0, velocity_y, 0)
+    controller._test_only_set_grab_strength(0)
+    drone_listener.on_frame(controller)
+    assert history == []
+
+
+# @pytest.mark.parametrize("position_x", [px for px in range(50, 100, 10)])
+# def test_move_forward(controller, drone_listener, position_x):
+#     history = []
+#     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+#     drone_listener.flying = True
+#     controller._test_only_set_palm_velocity(0, velocity_y, 0)
+#     controller._test_only_set_grab_strength(1)
+#     drone_listener.on_frame(controller)
+#     assert history == []
+
 # @pytest.mark.parametrize("s, vx, vy, vz, px, py, pz, f", LANDING_TESTS)
 # def test_hand_position_for_landing(controller, drone_listener, s, vx, vy, vz, px, py, pz, f):
 # # def test_hand_position(controller, drone_listener, requests):
