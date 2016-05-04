@@ -16,6 +16,7 @@ class MockDrone(object):
     hover = lambda self: None
     takeoff = lambda self: None
     land = lambda self: None
+    image = [["some", "rgba"], ["some", "rgba"]]
 
 
 class MockResponse(object):
