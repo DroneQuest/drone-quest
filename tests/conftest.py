@@ -55,17 +55,17 @@ class MockController(object):
         return self._test_only_mock_frame
 
     def _test_only_set_grab_strength(self, strength):
-        self._test_only_mock_frame[0].grab_strength = strength
+        self._test_only_mock_frame.hands[0].grab_strength = strength
 
     def _test_only_set_palm_velocity(self, x, y, z):
-        self._test_only_mock_frame[0].palm_velocity.x = x
-        self._test_only_mock_frame[0].palm_velocity.y = y
-        self._test_only_mock_frame[0].palm_velocity.z = z
+        self._test_only_mock_frame.hands[0].palm_velocity.x = x
+        self._test_only_mock_frame.hands[0].palm_velocity.y = y
+        self._test_only_mock_frame.hands[0].palm_velocity.z = z
 
     def _test_only_set_palm_position(self, x, y, z):
-        self._test_only_mock_frame[0].palm_position.x = x
-        self._test_only_mock_frame[0].palm_position.y = y
-        self._test_only_mock_frame[0].palm_position.z = z
+        self._test_only_mock_frame.hands[0].palm_position.x = x
+        self._test_only_mock_frame.hands[0].palm_position.y = y
+        self._test_only_mock_frame.hands[0].palm_position.z = z
 
 
 
@@ -104,15 +104,9 @@ def controller():
 @pytest.fixture()
 def drone_listener():
     from leap_motion.ar_leap import DroneListener
-    DroneListener._talk_to_drone = lambda self, route: "Mock Object"
     return DroneListener()
 
 
 @pytest.fixture()
 def requests():
     return Requests
-
-
-@pytest.fixture()
-def history():
-    return []
