@@ -71,12 +71,6 @@ def setup_server():
     return server
 
 
-# def server_listen(server):
-#     """Accept connections from the client."""
-#     conn, addr = server.accept()
-#     return (conn, addr)
-
-
 def server_read(connection):
     """Read and parse message from client."""
     string = ''.encode('utf-8')
