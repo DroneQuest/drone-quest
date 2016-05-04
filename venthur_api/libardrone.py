@@ -337,7 +337,7 @@ def at(command, seq, params):
     #     msg.encode('utf-8')
     # except AttributeError:
     #     pass
-    msg = bytes(msg, 'utf-8')
+    msg = bytes(msg)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.sendto(msg, (ARDRONE_ADDRESS, ARDRONE_COMMAND_PORT))
 
