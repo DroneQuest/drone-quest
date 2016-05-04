@@ -1,10 +1,8 @@
 """Set up a bottle server to accept post requests commanding the drone."""
-
 from bottle import post, run, hook, get, abort
 from bottle import response as response_module
 import json
 from adetaylor_api.libardrone import libardrone
-
 
 drone = libardrone.ARDrone2()
 PORT = 3000
@@ -18,8 +16,9 @@ def enable_cors(dependency_injection=None):
 
 
 @get('/imgdata')
-def imgdata():
+def imgdata(drone=None):
     """Return the current drone image."""
+    drone = GLOBAL_DRONE if drone is None else drone
     print(type(drone.image))
     # should be type bytes, not unicode
     image = drone.image
