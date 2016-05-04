@@ -1,22 +1,37 @@
 # -*- coding: utf-8 -*-
 """Test the drone server."""
 import pytest
-from server import client as client_module
+from server.bottle_drone import navdata, do, enable_cors
+from bottle import HTTPError
 
+NET_LOC = "http://127.0.0.1:3000/"
 
-COMMAND_TESTS_PASS = [(hex(message), "OK") for message in range(16)]
+VALID_COMMANDS = (
+    "move_left move_right move_forward move_backward move_up move_down "
+    "turn_left turn_right hover takeoff land"
+).split()
 
-
-@pytest.fixture(scope='function')
-def client():
-    """Client fixture."""
-    return client_module.build_client(client_module.setup_socket())
+COMMAND_TESTS_PASS = [(message, "Command executed: {}".format(message)) for message in VALID_COMMANDS]
+COMMAND_TESTS_FAIL = [("invalid_method", "Bad Command: invalid_method")]
 
 
 @pytest.mark.parametrize("message,expected_response", COMMAND_TESTS_PASS)
-def test_command(client, message, expected_response):
-    """Test the server responds to all commands correctly."""
-    client_module.send_message(client, message)
-    resp = client_module.get_reply(client)
-    assert resp == expected_response
-    client_module.close(client)
+def test_functional_command(drone, message, expected_response):
+    response = do(message, drone=drone)
+    assert response == expected_response
+
+
+@pytest.mark.parametrize("message, expected_response", COMMAND_TESTS_FAIL)
+def test_dysfunctional_command(drone, message, expected_response):
+    with pytest.raises(HTTPError):
+        response = do(message, drone=drone)
+
+
+def test_nav_data(drone):
+    response = navdata(drone=drone)
+    assert response == drone.navdata
+
+
+def test_enable_cors(response):
+    enable_cors(response)
+    assert response.headers['Access-Control-Allow-Origin'] == '*'

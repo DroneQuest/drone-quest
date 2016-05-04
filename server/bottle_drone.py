@@ -1,15 +1,19 @@
 """Set up a bottle server to accept post requests commanding the drone."""
-from bottle import post, run, hook, response, get, abort
+
+from bottle import post, run, hook, get, abort
+from bottle import response as response_module
 import json
 from adetaylor_api.libardrone import libardrone
 
 
 drone = libardrone.ARDrone2()
+PORT = 3000
 
 
 @hook('after_request')
-def enable_cors():
+def enable_cors(dependency_injection=None):
     """Allow control headers."""
+    response = dependency_injection if dependency_injection else response_module
     response.headers['Access-Control-Allow-Origin'] = '*'
 
 
@@ -29,30 +33,32 @@ def imgdata():
 
 
 @get('/navdata')
-def navdata():
+def navdata(drone=None):
     """Return packet of navdata."""
-    # print('NAVDATA:')
-    # print(drone.navdata)
-    response.content_type = 'application/json'
+    drone = GLOBAL_DRONE if drone is None else drone
+    response_module.content_type = 'application/json'
     return json.dumps(drone.navdata, ensure_ascii=False)
 
 
 @post('/do/<command>')
-def do(command):
+def do(command, drone=None):
     """Execute the given command from the route."""
+    drone = GLOBAL_DRONE if drone is None else drone
     try:
         print('Command received: {}'.format(command))
         getattr(drone, command)()
         print('Command executed: {}'.format(command))
-        response.content_type = 'application/json'
+        response_module.content_type = 'application/json'
         return json.dumps(drone.navdata, ensure_ascii=False)
     except AttributeError:
         print('Bad Command: {}'.format(command))
         abort(404, 'Bad Command: {}'.format(command))
 
 
-try:
-    run(host='127.0.0.1', port=8080)
-finally:
-    drone.land()
-    drone.halt()
+if __name__ == "__main__":
+    GLOBAL_DRONE = libardrone.ARDrone()
+    try:
+        run(host='127.0.0.1', port=PORT)
+    finally:
+        GLOBAL_DRONE.land()
+        GLOBAL_DRONE.halt()

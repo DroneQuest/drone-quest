@@ -29,8 +29,6 @@ import struct
 import threading
 import multiprocessing
 
-from venthur_api import arvideo
-
 ARDRONE_ADDRESS = '192.168.1.1'
 ARDRONE_NAVDATA_PORT = 5554
 ARDRONE_VIDEO_PORT = 5555
@@ -54,11 +52,6 @@ class ARDroneNetworkProcess(multiprocessing.Process):
 
 
     def run(self):
-        video_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        video_socket.setblocking(0)
-        video_socket.bind(('', ARDRONE_VIDEO_PORT))
-        video_socket.sendto(INIT_MSG, (ARDRONE_ADDRESS, ARDRONE_VIDEO_PORT))
-
         nav_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         nav_socket.setblocking(0)
         nav_socket.bind(('', ARDRONE_NAVDATA_PORT))
@@ -66,24 +59,9 @@ class ARDroneNetworkProcess(multiprocessing.Process):
 
         stopping = False
         while not stopping:
-            inputready, outputready, exceptready = select.select([nav_socket, video_socket, self.com_pipe], [], [])
+            inputready, outputready, exceptready = select.select([nav_socket, self.com_pipe], [], [])
             for i in inputready:
-                if i == video_socket:
-                    while 1:
-                        try:
-                            data = video_socket.recv(65535)
-                        except IOError:
-                            # we consumed every packet from the socket and
-                            # continue with the last one
-                            break
-                    w, h, image, t = arvideo.read_picture(data)
-                    print('IMAGE DATA RECEIVED')
-                    print('w: {}, h: {}, t: {}'.format(w, h, t))
-                    print('IMAGE:')
-                    print(type(image))
-                    print(image)
-                    self.video_pipe.send(image)
-                elif i == nav_socket:
+                if i == nav_socket:
                     while 1:
                         try:
                             data = nav_socket.recv(65535)
@@ -97,7 +75,6 @@ class ARDroneNetworkProcess(multiprocessing.Process):
                     _ = self.com_pipe.recv()
                     stopping = True
                     break
-        video_socket.close()
         nav_socket.close()
 
 

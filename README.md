@@ -1,4 +1,6 @@
 
+![DroneQuest Tests](https://api.travis-ci.org/DroneQuest/drone-quest.svg "Tests are passing! ... right?")
+
 # Drone Quest
 
 Our goal is to use terminal commands to send commands to a Parrot AR Drone 2.0 and successfuly make the connect.
