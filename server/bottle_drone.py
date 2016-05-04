@@ -4,7 +4,7 @@ from bottle import response as response_module
 import json
 from adetaylor_api.libardrone import libardrone
 
-drone = libardrone.ARDrone2()
+# drone = libardrone.ARDrone2()
 IP = '127.0.0.1'
 PORT = 3000
 
@@ -58,7 +58,7 @@ def do(command, drone=None):
 
 
 if __name__ == "__main__":
-    GLOBAL_DRONE = libardrone.ARDrone()
+    GLOBAL_DRONE = libardrone.ARDrone2()
     try:
         run(host=IP, port=PORT)
     finally:

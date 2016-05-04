@@ -21,7 +21,7 @@
 
 import unittest
 
-import libardrone
+from . import libardrone
 
 class LibardroneTestCase(unittest.TestCase):
     def test_f2i(self):
@@ -29,4 +29,3 @@ class LibardroneTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
