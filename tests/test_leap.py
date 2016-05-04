@@ -162,15 +162,37 @@ def test_hover(controller, drone_listener, velocity_y):
     assert history == []
 
 
-# @pytest.mark.parametrize("position_x", [px for px in range(50, 100, 10)])
-# def test_move_forward(controller, drone_listener, position_x):
-#     history = []
-#     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
-#     drone_listener.flying = True
-#     controller._test_only_set_palm_velocity(0, velocity_y, 0)
-#     controller._test_only_set_grab_strength(1)
-#     drone_listener.on_frame(controller)
-#     assert history == []
+@pytest.mark.parametrize("position_z", [px for px in range(-100, -50, 10)])
+def test_move_forward(controller, drone_listener, position_z):
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_position(0, 0, position_z)
+    controller._test_only_set_grab_strength(0)
+    drone_listener.on_frame(controller)
+    assert history == ['move_forward']
+
+
+@pytest.mark.parametrize("position_z", [px for px in range(-45, -10, 15)])
+def test_do_not_move_forward(controller, drone_listener, position_z):
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_position(0, 0, position_z)
+    controller._test_only_set_grab_strength(0)
+    drone_listener.on_frame(controller)
+    assert history == []
+
+
+@pytest.mark.parametrize("position_z", [px for px in range(-100, -50, 10)])
+def test_move_forward_hand_closed(controller, drone_listener, position_z):
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_position(0, 0, position_z)
+    controller._test_only_set_grab_strength(1)
+    drone_listener.on_frame(controller)
+    assert history == []
 
 # @pytest.mark.parametrize("s, vx, vy, vz, px, py, pz, f", LANDING_TESTS)
 # def test_hand_position_for_landing(controller, drone_listener, s, vx, vy, vz, px, py, pz, f):
