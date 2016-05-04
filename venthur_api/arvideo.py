@@ -42,7 +42,7 @@ except ImportError:
 
 
 # from zig-zag back to normal
-ZIG_ZAG_POSITIONS = array.array('B',
+ZIG_ZAG_POSITIONS = array.array(b'B',
     ( 0,  1,  8, 16,  9,  2, 3, 10,
      17, 24, 32, 25, 18, 11, 4,  5,
      12, 19, 26, 33, 40, 48, 41, 34,
@@ -53,7 +53,7 @@ ZIG_ZAG_POSITIONS = array.array('B',
      53, 60, 61, 54, 47, 55, 62, 63))
 
 # Inverse quantization
-IQUANT_TAB = array.array('B',
+IQUANT_TAB = array.array(b'B',
     ( 3,  5,  7,  9, 11, 13, 15, 17,
       5,  7,  9, 11, 13, 15, 17, 19,
       7,  9, 11, 13, 15, 17, 19, 21,
@@ -64,7 +64,7 @@ IQUANT_TAB = array.array('B',
      17, 19, 21, 23, 25, 27, 29, 31))
 
 # Used for upscaling the 8x8 b- and r-blocks to 16x16
-SCALE_TAB = array.array('B',
+SCALE_TAB = array.array(b'B',
     ( 0,  0,  1,  1,  2,  2,  3,  3,
       0,  0,  1,  1,  2,  2,  3,  3,
       8,  8,  9,  9, 10, 10, 11, 11,
@@ -102,7 +102,7 @@ SCALE_TAB = array.array('B',
      60, 60, 61, 61, 62, 62, 63, 63))
 
 # Count leading zeros look up table
-CLZLUT = array.array('B',
+CLZLUT = array.array(b'B',
     (8, 7, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4,
      3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
      2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -121,7 +121,7 @@ CLZLUT = array.array('B',
      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
 # Map pixels from four 8x8 blocks to one 16x16
-MB_TO_GOB_MAP = array.array('B',
+MB_TO_GOB_MAP = array.array(b'B',
     [  0,   1,   2,   3,   4,   5,   6,   7,
       16,  17,  18,  19,  20,  21,  22,  23,
       32,  33,  34,  35,  36,  37,  38,  39,
@@ -154,12 +154,12 @@ MB_TO_GOB_MAP = array.array('B',
      216, 217, 218, 219, 220, 221, 222, 223,
      232, 233, 234, 235, 236, 237, 238, 239,
      248, 249, 250, 251, 252, 253, 254, 255])
-MB_ROW_MAP = array.array('B', [i // 16 for i in MB_TO_GOB_MAP])
-MB_COL_MAP = array.array('B', [i % 16 for i in MB_TO_GOB_MAP])
+MB_ROW_MAP = array.array(b'B', [i // 16 for i in MB_TO_GOB_MAP])
+MB_COL_MAP = array.array(b'B', [i % 16 for i in MB_TO_GOB_MAP])
 
 # An array of zeros. It is much faster to take the zeros from here than to
 # generate a new list when needed.
-ZEROS = array.array('i', [0 for i in range(256)])
+ZEROS = array.array(b'i', [0 for i in range(256)])
 
 # Constants needed for the inverse discrete cosine transform.
 FIX_0_298631336 = 2446

@@ -17,6 +17,9 @@ def enable_cors():
 def imgdata():
     """Return the current drone image."""
     print(type(drone.image))
+    # should be type bytes, not unicode
+    print('IMGDATA:')
+    print(drone.image)
     response.content_type = 'image/x-rgb'
     return drone.image
 
@@ -24,9 +27,10 @@ def imgdata():
 @get('/navdata')
 def navdata():
     """Return packet of navdata."""
-    response.content_type = 'application/json'
+    print('NAVDATA:')
     print(drone.navdata)
-    return json.dumps(drone.navdata)
+    response.content_type = 'application/json'
+    return json.dumps(drone.navdata, ensure_ascii=False)
 
 
 @post('/do/<command>')
