@@ -1,26 +1,26 @@
-# Copyright (c) 2011 Bastian Venthur
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-
 """
 This module provides access to the data provided by the AR.Drone.
+
+Copyright (c) 2011 Bastian Venthur
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
 """
 
 import select
@@ -29,9 +29,11 @@ import struct
 import threading
 import multiprocessing
 
+ARDRONE_ADDRESS = '192.168.1.1'
 ARDRONE_NAVDATA_PORT = 5554
 ARDRONE_VIDEO_PORT = 5555
 ARDRONE_COMMAND_PORT = 5556
+INIT_MSG = b'\x01\x00\x00\x00'
 
 
 class ARDroneNetworkProcess(multiprocessing.Process):
@@ -42,16 +44,18 @@ class ARDroneNetworkProcess(multiprocessing.Process):
     """
 
     def __init__(self, nav_pipe, video_pipe, com_pipe):
+        """Initialize the network process with pipes from libardrone."""
         multiprocessing.Process.__init__(self)
         self.nav_pipe = nav_pipe
         self.video_pipe = video_pipe
         self.com_pipe = com_pipe
 
+
     def run(self):
         nav_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         nav_socket.setblocking(0)
         nav_socket.bind(('', ARDRONE_NAVDATA_PORT))
-        nav_socket.sendto("\x01\x00\x00\x00", ('192.168.1.1', ARDRONE_NAVDATA_PORT))
+        nav_socket.sendto(INIT_MSG, (ARDRONE_ADDRESS, ARDRONE_NAVDATA_PORT))
 
         stopping = False
         while not stopping:
@@ -146,12 +150,12 @@ def decode_navdata(packet):
     offset += struct.calcsize("IIII")
     while 1:
         try:
-            id_nr, size =  struct.unpack_from("HH", packet, offset)
+            id_nr, size = struct.unpack_from("HH", packet, offset)
             offset += struct.calcsize("HH")
         except struct.error:
             break
         values = []
-        for i in range(size-struct.calcsize("HH")):
+        for i in range(size - struct.calcsize("HH")):
             values.append(struct.unpack_from("c", packet, offset)[0])
             offset += struct.calcsize("c")
         # navdata_tag_t in navdata-common.h

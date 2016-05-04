@@ -1,28 +1,27 @@
-# Copyright (c) 2011 Bastian Venthur
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-
-
 """
 Python library for the AR.Drone.
 
 This module was tested with Python 2.6.6 and AR.Drone vanilla firmware 1.5.1.
+
+Copyright (c) 2011 Bastian Venthur
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
 """
 
 from __future__ import unicode_literals
@@ -37,7 +36,7 @@ from venthur_api import arnetwork
 
 __author__ = "Bastian Venthur"
 
-
+ARDRONE_ADDRESS = arnetwork.ARDRONE_ADDRESS
 ARDRONE_NAVDATA_PORT = arnetwork.ARDRONE_NAVDATA_PORT
 ARDRONE_VIDEO_PORT = arnetwork.ARDRONE_VIDEO_PORT
 ARDRONE_COMMAND_PORT = arnetwork.ARDRONE_COMMAND_PORT
@@ -61,11 +60,15 @@ class ARDrone(object):
         self.video_pipe, video_pipe_other = multiprocessing.Pipe()
         self.nav_pipe, nav_pipe_other = multiprocessing.Pipe()
         self.com_pipe, com_pipe_other = multiprocessing.Pipe()
-        self.network_process = arnetwork.ARDroneNetworkProcess(nav_pipe_other, video_pipe_other, com_pipe_other)
+        self.network_process = arnetwork.ARDroneNetworkProcess(
+            nav_pipe_other,
+            video_pipe_other,
+            com_pipe_other
+        )
         self.network_process.start()
         self.ipc_thread = arnetwork.IPCThread(self)
         self.ipc_thread.start()
-        self.image = ""
+        self.image = b''
         self.navdata = dict()
         self.time = 0
 
@@ -183,13 +186,15 @@ class ARDrone(object):
 
     def move(self, lr, fb, vv, va):
         """Make the drone move: translate/rotate.
+
         Parameters:
         lr -- left-right tilt: float [-1..1] negative: left, positive: right
         rb -- front-back tilt: float [-1..1] negative: forwards, positive:
             backwards
         vv -- vertical speed: float [-1..1] negative: go down, positive: rise
         va -- angular speed: float [-1..1] negative: spin left, positive: spin
-            right"""
+            right
+        """
         self.at(at_pcmd, True, lr, fb, vv, va)
 
 
@@ -198,8 +203,7 @@ class ARDrone(object):
 ###############################################################################
 
 def at_ref(seq, takeoff, emergency=False):
-    """
-    Basic behaviour of the drone: take-off/landing, emergency stop/reset)
+    """Basic behaviour of the drone: take-off/landing, emergency stop/reset).
 
     Parameters:
     seq -- sequence number
@@ -213,9 +217,9 @@ def at_ref(seq, takeoff, emergency=False):
         p += 0b0100000000
     at("REF", seq, [p])
 
+
 def at_pcmd(seq, progressive, lr, fb, vv, va):
-    """
-    Makes the drone move (translate/rotate).
+    """Make the drone move (translate/rotate).
 
     Parameters:
     seq -- sequence number
@@ -233,18 +237,18 @@ def at_pcmd(seq, progressive, lr, fb, vv, va):
     p = 1 if progressive else 0
     at("PCMD", seq, [p, float(lr), float(fb), float(vv), float(va)])
 
+
 def at_ftrim(seq):
-    """
-    Tell the drone it's lying horizontally.
+    """Tell the drone it's lying horizontally.
 
     Parameters:
     seq -- sequence number
     """
     at("FTRIM", seq, [])
 
+
 def at_zap(seq, stream):
-    """
-    Selects which video stream to send on the video UDP port.
+    """Select which video stream to send on the video UDP port.
 
     Parameters:
     seq -- sequence number
@@ -253,20 +257,20 @@ def at_zap(seq, stream):
     # FIXME: improve parameters to select the modes directly
     at("ZAP", seq, [stream])
 
+
 def at_config(seq, option, value):
     """Set configuration parameters of the drone."""
     at("CONFIG", seq, [str(option), str(value)])
 
+
 def at_comwdg(seq):
-    """
-    Reset communication watchdog.
-    """
+    """Reset communication watchdog."""
     # FIXME: no sequence number
     at("COMWDG", seq, [])
 
+
 def at_aflight(seq, flag):
-    """
-    Makes the drone fly autonomously.
+    """Make the drone fly autonomously.
 
     Parameters:
     seq -- sequence number
@@ -274,9 +278,9 @@ def at_aflight(seq, flag):
     """
     at("AFLIGHT", seq, [flag])
 
+
 def at_pwm(seq, m1, m2, m3, m4):
-    """
-    Sends control values directly to the engines, overriding control loops.
+    """Send control values directly to the engines, overriding control loops.
 
     Parameters:
     seq -- sequence number
@@ -288,9 +292,9 @@ def at_pwm(seq, m1, m2, m3, m4):
     # FIXME: what type do mx have?
     pass
 
+
 def at_led(seq, anim, f, d):
-    """
-    Control the drones LED.
+    """Control the drone's LED.
 
     Parameters:
     seq -- sequence number
@@ -300,9 +304,9 @@ def at_led(seq, anim, f, d):
     """
     pass
 
+
 def at_anim(seq, anim, d):
-    """
-    Makes the drone execute a predefined movement (animation).
+    """Make the drone execute a predefined movement (animation).
 
     Parameters:
     seq -- sequcence number
@@ -311,8 +315,10 @@ def at_anim(seq, anim, d):
     """
     at("ANIM", seq, [anim, d])
 
+
 def at(command, seq, params):
-    """
+    """Send command directly to the drone.
+
     Parameters:
     command -- the command
     seq -- the sequence number
@@ -320,20 +326,20 @@ def at(command, seq, params):
     """
     param_str = ''
     for p in params:
-        if type(p) == int:
+        if isinstance(p, int):
             param_str += ",%d" % p
-        elif type(p) == float:
+        elif isinstance(p, float):
             param_str += ",%d" % f2i(p)
-        elif type(p) == str:
-            param_str += ',"'+p+'"'
+        elif isinstance(p, str):
+            param_str += ',"' + p + '"'
     msg = "AT*%s=%i%s\r" % (command, seq, param_str)
     # try:
     #     msg.encode('utf-8')
     # except AttributeError:
     #     pass
-    # msg = bytes(msg, 'utf-8')
+    msg = bytes(msg, 'utf-8')
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(msg, ("192.168.1.1", ARDRONE_COMMAND_PORT))
+    sock.sendto(msg, (ARDRONE_ADDRESS, ARDRONE_COMMAND_PORT))
 
 
 def f2i(f):
@@ -343,6 +349,7 @@ def f2i(f):
     f -- floating point value
     """
     return struct.unpack('i', struct.pack('f', f))[0]
+
 
 if __name__ == "__main__":
 
