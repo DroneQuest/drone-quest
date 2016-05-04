@@ -4,24 +4,29 @@ import pytest
 
 
 def test_initialization(controller, drone_listener):
+    """Test if the drone starts up correctly."""
     drone_listener.on_init(controller)
     assert drone_listener.start_time
 
 
 def test_connect(controller, drone_listener):
+    """Test if the drone connects properly."""
     drone_listener.on_init(controller)
     assert drone_listener.start_time
 
 
 def test_disconnect(controller, drone_listener):
+    """Test if the drone disconnects correctly."""
     assert drone_listener.on_disconnect(controller) is None
 
 
 def test_exit(controller, drone_listener):
+    """Test if the drone exits correctly."""
     assert drone_listener.on_exit(controller) is None
 
 
 def test_no_hands(controller, drone_listener, requests):
+    """Test if the leap motion does not send commands if no hands found."""
     history = []
     drone_listener._talk_to_drone = lambda self, route: history.append(route)
     drone_listener.on_frame(controller)
@@ -30,6 +35,7 @@ def test_no_hands(controller, drone_listener, requests):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(1000, 5000, 1000)])
 def test_try_to_take_off(controller, drone_listener, velocity_y):
+    """Test if the drone takes off if hands jerk up in a fist."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = False
@@ -41,6 +47,7 @@ def test_try_to_take_off(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(1000, 5000, 1000)])
 def test_do_not_to_take_off_hand_open(controller, drone_listener, velocity_y):
+    """Test if the drone does not takes off if hands jerk up while open."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = False
@@ -52,6 +59,7 @@ def test_do_not_to_take_off_hand_open(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(1000, 5000, 1000)])
 def test_do_not_to_take_off_is_flying(controller, drone_listener, velocity_y):
+    """Test if the api does not send take off commands if the drone is already flying."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -63,6 +71,7 @@ def test_do_not_to_take_off_is_flying(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(0, 1000, 100)])
 def test_do_not_to_take_off_is_too_slow(controller, drone_listener, velocity_y):
+    """Test if the drone does not take off if the hand just moves up."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = False
@@ -74,6 +83,7 @@ def test_do_not_to_take_off_is_too_slow(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(-5000, -1000, 1000)])
 def test_try_to_land(controller, drone_listener, velocity_y):
+    """Test if the drone lands if the user jerks hand down in a fist."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -85,6 +95,7 @@ def test_try_to_land(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(-5000, -1000, 1000)])
 def test_do_not_land_hand_open(controller, drone_listener, velocity_y):
+    """Test if the drone does not land if the user jerks open hand down."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -96,6 +107,7 @@ def test_do_not_land_hand_open(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(-5000, -1000, 1000)])
 def test_do_not_land_is_on_ground(controller, drone_listener, velocity_y):
+    """Test if the drone does not land if already grounded."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = False
@@ -107,6 +119,7 @@ def test_do_not_land_is_on_ground(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(1000, 0, -100)])
 def test_do_not_land_is_too_slow(controller, drone_listener, velocity_y):
+    """Test if the drone does not land if the user moves hand down slowly."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -118,6 +131,7 @@ def test_do_not_land_is_too_slow(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(-10, 10)])
 def test_hover(controller, drone_listener, velocity_y):
+    """Test if the drone hovers if the hand is still."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -128,7 +142,8 @@ def test_hover(controller, drone_listener, velocity_y):
 
 
 @pytest.mark.parametrize("velocity_y", [-20, -15, 15, 20])
-def test_hover(controller, drone_listener, velocity_y):
+def test_does_not_hover(controller, drone_listener, velocity_y):
+    """Test if the drone does not hover if the user isn't staying still."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -140,6 +155,7 @@ def test_hover(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("position_z", [px for px in range(-100, -50, 10)])
 def test_move_forward(controller, drone_listener, position_z):
+    """"""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
