@@ -155,7 +155,7 @@ def test_does_not_hover(controller, drone_listener, velocity_y):
 
 @pytest.mark.parametrize("position_z", [px for px in range(-100, -50, 10)])
 def test_move_forward(controller, drone_listener, position_z):
-    """"""
+    """Test if the drone moves forward when hand is in correct position."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -167,6 +167,7 @@ def test_move_forward(controller, drone_listener, position_z):
 
 @pytest.mark.parametrize("position_z", [px for px in range(-45, -10, 15)])
 def test_do_not_move_forward(controller, drone_listener, position_z):
+    """Test if the drone does not move forward when hand is close to correct position."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -178,6 +179,7 @@ def test_do_not_move_forward(controller, drone_listener, position_z):
 
 @pytest.mark.parametrize("position_z", [px for px in range(-100, -50, 10)])
 def test_move_forward_hand_closed(controller, drone_listener, position_z):
+    """Test if the drone does not move forward when hand is closed."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -189,6 +191,7 @@ def test_move_forward_hand_closed(controller, drone_listener, position_z):
 
 @pytest.mark.parametrize("position_z", [px for px in range(50, 100, 10)])
 def test_move_backward(controller, drone_listener, position_z):
+    """Test if the drone moves backward when hand is in correct position."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -200,6 +203,7 @@ def test_move_backward(controller, drone_listener, position_z):
 
 @pytest.mark.parametrize("position_z", [px for px in range(10, 45, 15)])
 def test_do_not_move_backward(controller, drone_listener, position_z):
+    """Test if the drone does not move backward when hand is close to correct position."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -211,6 +215,7 @@ def test_do_not_move_backward(controller, drone_listener, position_z):
 
 @pytest.mark.parametrize("position_z", [px for px in range(50, 100, 10)])
 def test_move_backward_hand_closed(controller, drone_listener, position_z):
+    """Test if the drone does not move backward when hand is closed."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -223,6 +228,7 @@ def test_move_backward_hand_closed(controller, drone_listener, position_z):
 
 @pytest.mark.parametrize("position_x", [px for px in range(50, 100, 10)])
 def test_move_right(controller, drone_listener, position_x):
+    """Test if the drone moves right when hand is in correct position."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -234,6 +240,7 @@ def test_move_right(controller, drone_listener, position_x):
 
 @pytest.mark.parametrize("position_x", [px for px in range(10, 45, 15)])
 def test_do_not_move_right(controller, drone_listener, position_x):
+    """Test if the drone does not move right when hand is close to correct position."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -245,6 +252,7 @@ def test_do_not_move_right(controller, drone_listener, position_x):
 
 @pytest.mark.parametrize("position_x", [px for px in range(50, 100, 10)])
 def test_move_right_hand_closed(controller, drone_listener, position_x):
+    """Test if the drone does not move right when hand is closed."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -257,6 +265,7 @@ def test_move_right_hand_closed(controller, drone_listener, position_x):
 
 @pytest.mark.parametrize("position_x", [px for px in range(-100, -50, 10)])
 def test_move_left(controller, drone_listener, position_x):
+    """Test if the drone moves left when hand is in correct position."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -268,6 +277,7 @@ def test_move_left(controller, drone_listener, position_x):
 
 @pytest.mark.parametrize("position_x", [px for px in range(-45, -10, 15)])
 def test_do_not_move_left(controller, drone_listener, position_x):
+    """Test if the drone does not move left when hand is close to correct position."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -278,6 +288,7 @@ def test_do_not_move_left(controller, drone_listener, position_x):
 
 
 @pytest.mark.parametrize("position_x", [px for px in range(-100, -50, 10)])
+"""Test if the drone does not move left when hand is closed."""
 def test_move_left_hand_closed(controller, drone_listener, position_x):
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
@@ -290,6 +301,7 @@ def test_move_left_hand_closed(controller, drone_listener, position_x):
 
 @pytest.mark.parametrize("positions", [position for position in [(50, 0, 0), (0, 50, 0), (0, 0, 50)]])
 def test_do_not_move_is_grounded(controller, drone_listener, positions):
+    """Test if the leap motion does not send any commands when drone is grounded."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = False
