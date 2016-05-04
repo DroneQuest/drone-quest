@@ -1,10 +1,10 @@
 """Set up a bottle server to accept post requests commanding the drone."""
 from bottle import post, run, hook, response, get, abort
 import json
-from adetaylor_api import libardrone
+from adetaylor_api.libardrone import libardrone
 
 
-drone = libardrone.ARDrone()
+drone = libardrone.ARDrone2()
 
 
 @hook('after_request')
@@ -19,12 +19,12 @@ def imgdata():
     print(type(drone.image))
     # should be type bytes, not unicode
     image = drone.image
-    if image:
+    if image.any():
         print('IMGDATA HAS VALUE')
         print(drone.image)
-    # else:
-    #     print('IMGDATA IS NULL:')
-    response.content_type = 'image/x-rgb'
+    else:
+        print('IMGDATA IS NULL:')
+    # response.content_type = 'image/x-rgb'
     return drone.image
 
 

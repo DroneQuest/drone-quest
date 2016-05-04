@@ -97,7 +97,7 @@ class ARDrone(object):
         time.sleep(0.5)
         self.config_ids_string = [SESSION_ID, USER_ID, APP_ID]
         self.configure_multisession(SESSION_ID, USER_ID, APP_ID, self.config_ids_string)
-        self.set_session_id (self.config_ids_string, SESSION_ID)
+        self.set_session_id(self.config_ids_string, SESSION_ID)
         time.sleep(0.5)
         self.set_profile_id(self.config_ids_string, USER_ID)
         time.sleep(0.5)
@@ -132,9 +132,8 @@ class ARDrone(object):
 
         time.sleep(1.0)
 
-        self.at(at_config_ids , self.config_ids_string)
+        self.at(at_config_ids, self.config_ids_string)
         self.at(at_config, "general:navdata_demo", "TRUE")
-
 
     def takeoff(self):
         """Make the drone takeoff."""
@@ -202,9 +201,10 @@ class ARDrone(object):
         self.speed = speed
 
     def set_camera_view(self, downward):
-        """
-        Set which video camera is used. If 'downward' is true,
-        downward camera will be viewed - otherwise frontwards.
+        """Set which video camera is used.
+
+        If 'downward' is true, downward camera will be viewed -
+        otherwise frontwards.
         """
         channel = None
         if downward:
@@ -233,40 +233,40 @@ class ARDrone(object):
         self.at(at_config, "custom:profile_id", user_id)
         self.at(at_config, "custom:application_id", app_id)
 
-    def set_session_id (self, config_ids_string, session_id):
-        self.at(at_config_ids , config_ids_string)
+    def set_session_id(self, config_ids_string, session_id):
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "custom:session_id", session_id)
 
-    def set_profile_id (self, config_ids_string, profile_id):
-        self.at(at_config_ids , config_ids_string)
+    def set_profile_id(self, config_ids_string, profile_id):
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "custom:profile_id", profile_id)
 
-    def set_app_id (self, config_ids_string, app_id):
-        self.at(at_config_ids , config_ids_string)
+    def set_app_id(self, config_ids_string, app_id):
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "custom:application_id", app_id)
 
-    def set_video_bitrate_control_mode (self, config_ids_string, mode):
-        self.at(at_config_ids , config_ids_string)
+    def set_video_bitrate_control_mode(self, config_ids_string, mode):
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "video:bitrate_control_mode", mode)
 
-    def set_video_bitrate (self, config_ids_string, bitrate):
-        self.at(at_config_ids , config_ids_string)
+    def set_video_bitrate(self, config_ids_string, bitrate):
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "video:bitrate", bitrate)
 
     def set_video_channel(self, config_ids_string, channel):
-        self.at(at_config_ids , config_ids_string)
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "video:video_channel", channel)
 
     def set_max_bitrate(self, config_ids_string, max_bitrate):
-        self.at(at_config_ids , config_ids_string)
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "video:max_bitrate", max_bitrate)
 
-    def set_fps (self, config_ids_string, fps):
-        self.at(at_config_ids , config_ids_string)
+    def set_fps(self, config_ids_string, fps):
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "video:codec_fps", fps)
 
-    def set_video_codec (self, config_ids_string, codec):
-        self.at(at_config_ids , config_ids_string)
+    def set_video_codec(self, config_ids_string, codec):
+        self.at(at_config_ids, config_ids_string)
         self.at(at_config, "video:video_codec", codec)
 
     def commwdg(self):
@@ -345,6 +345,7 @@ class ARDrone(object):
         elif (command == "hover" and not self.last_command_is_hovering):
             self.hover()
             self.last_command_is_hovering = True
+
 
 class ARDrone2(ARDrone):
     def __init__(self, hd=False):

@@ -28,7 +28,7 @@ H.264 video decoder for AR.Drone 2.0. Uses ffmpeg.
 
 import sys
 from subprocess import PIPE, Popen
-from threading  import Thread
+from threading import Thread
 import time
 import libardrone
 import ctypes

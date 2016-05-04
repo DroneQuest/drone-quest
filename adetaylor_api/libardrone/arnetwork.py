@@ -28,6 +28,7 @@ import socket
 import multiprocessing
 import libardrone
 
+
 class ARDroneNetworkProcess(threading.Thread):
     """ARDrone Network Process.
 
