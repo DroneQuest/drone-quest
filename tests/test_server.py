@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test the drone server."""
 import pytest
-from server.bottle_drone import navdata, do
+from server.bottle_drone import navdata, do, enable_cors
 
 NET_LOC = "http://127.0.0.1:3000/"
 
@@ -22,3 +22,8 @@ def test_functional_command(drone, message, expected_response):
 def test_nav_data(drone):
     response = navdata(drone=drone)
     assert response == drone.navdata
+
+
+def test_enable_cors(response):
+    enable_cors(response)
+    assert response.headers['Access-Control-Allow-Origin'] == '*'
