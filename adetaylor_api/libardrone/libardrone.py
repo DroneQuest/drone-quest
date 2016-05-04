@@ -44,17 +44,6 @@ USER_ID = "36355d78"
 APP_ID = "21d958e4"
 
 
-# 0: "Not defined"
-# 131072:  "Landed"
-# 393216:  "Taking-off-Floor"
-# 393217:  "Taking-off-Air"
-# 262144:  "Hovering"
-# 524288:  "Landing"
-# 458752:  "Stabilizing"
-# 196608:  "Moving"
-# 262153 and 196613 and 262155 and 196614 and 458753:  "Undefined"
-
-
 NAVDATA_KEYS = [
     'ctrl_state',
     'battery',
@@ -65,7 +54,22 @@ NAVDATA_KEYS = [
     'vx',
     'vy',
     'vz',
-    'num_frames'
+    'num_frames',
+]
+
+AVAILABLE_COMMANDS = [
+    "emergency",
+    "land",
+    "takeoff",
+    "move_left",
+    "move_right",
+    "move_down",
+    "move_up",
+    "move_backward",
+    "move_forward",
+    "turn_left",
+    "turn_right",
+    "hover",
 ]
 
 
@@ -323,11 +327,8 @@ class ARDrone(object):
         self.image = image
 
     def apply_command(self, command):
-        available_commands = ["emergency",
-        "land", "takeoff", "move_left", "move_right", "move_down", "move_up",
-        "move_backward", "move_forward", "turn_left", "turn_right", "hover"]
-        if command not in available_commands:
-            logging.error("Command %s is not a recognized command" % command)
+        if command not in AVAILABLE_COMMANDS:
+            print("Command %s is not a recognized command" % command)
 
         if command != "hover":
             self.last_command_is_hovering = False
@@ -366,8 +367,9 @@ class ARDrone2(ARDrone):
         ARDrone.__init__(self, True, hd)
 
 ###############################################################################
-### Low level AT Commands
+# Low level AT Commands
 ###############################################################################
+
 
 def at_ref(seq, takeoff, emergency=False):
     """
@@ -384,6 +386,7 @@ def at_ref(seq, takeoff, emergency=False):
     if emergency:
         p += 0b0100000000
     at("REF", seq, [p])
+
 
 def at_pcmd(seq, progressive, lr, fb, vv, va):
     """
@@ -405,6 +408,7 @@ def at_pcmd(seq, progressive, lr, fb, vv, va):
     p = 1 if progressive else 0
     at("PCMD", seq, [p, float(lr), float(fb), float(vv), float(va)])
 
+
 def at_ftrim(seq):
     """
     Tell the drone it's lying horizontally.
@@ -413,6 +417,7 @@ def at_ftrim(seq):
     seq -- sequence number
     """
     at("FTRIM", seq, [])
+
 
 def at_zap(seq, stream):
     """
@@ -425,17 +430,21 @@ def at_zap(seq, stream):
     # FIXME: improve parameters to select the modes directly
     at("ZAP", seq, [stream])
 
+
 def at_config(seq, option, value):
     """Set configuration parameters of the drone."""
     at("CONFIG", seq, [str(option), str(value)])
+
 
 def at_config_ids(seq, value):
     """Set configuration parameters of the drone."""
     at("CONFIG_IDS", seq, value)
 
+
 def at_ctrl(seq, num):
     """Ask the parrot to drop its configuration file"""
     at("CTRL", seq, [num, 0])
+
 
 def at_comwdg(seq):
     """
@@ -443,6 +452,7 @@ def at_comwdg(seq):
     """
     # FIXME: no sequence number
     at("COMWDG", seq, [])
+
 
 def at_aflight(seq, flag):
     """
@@ -453,6 +463,7 @@ def at_aflight(seq, flag):
     flag -- Integer: 1: start flight, 0: stop flight
     """
     at("AFLIGHT", seq, [flag])
+
 
 def at_pwm(seq, m1, m2, m3, m4):
     """
@@ -468,6 +479,7 @@ def at_pwm(seq, m1, m2, m3, m4):
     # FIXME: what type do mx have?
     raise NotImplementedError()
 
+
 def at_led(seq, anim, f, d):
     """
     Control the drones LED.
@@ -480,6 +492,7 @@ def at_led(seq, anim, f, d):
     """
     pass
 
+
 def at_anim(seq, anim, d):
     """
     Makes the drone execute a predefined movement (animation).
@@ -490,6 +503,7 @@ def at_anim(seq, anim, d):
     d -- Integer: total duration in sections of the animation
     """
     at("ANIM", seq, [anim, d])
+
 
 def at(command, seq, params):
     """
