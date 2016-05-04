@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+
 # Copyright (c) 2011 Bastian Venthur
+# Copyright (c) 2013 Adrian Taylor
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,16 +21,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import unittest
-try:
-    from adetaylor_api.libardrone import libardrone
-except ImportError:
-    import libardrone
+
+"""
+Video decoding for the AR.Drone 2.0.
+
+This is just H.264 encapsulated in a funny way.
+"""
+
+from . import h264decoder, paveparser
 
 
-class LibardroneTestCase(unittest.TestCase):
-    def test_f2i(self):
-        self.assertEqual(libardrone.f2i(-0.8,), -1085485875)
+class ARVideo2(object):
+    def __init__(self, drone, debug=False):
+        h264 = h264decoder.H264Decoder(self, drone.image_shape)
+        self.paveparser = paveparser.PaVEParser(h264)
+        self._drone = drone
 
-if __name__ == "__main__":
-    unittest.main()
+    """
+    Called by the H264 decoder when there's an image ready
+    """
+    def image_ready(self, image):
+        self._drone.set_image(image)
+
+    def write(self, data):
+        self.paveparser.write(data)

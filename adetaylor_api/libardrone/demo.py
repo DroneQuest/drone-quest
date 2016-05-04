@@ -29,15 +29,17 @@ stream.
 
 
 import pygame
+import pygame.surfarray
 
+import pygame.transform
 import libardrone
-
 
 def main():
     pygame.init()
     W, H = 320, 240
     screen = pygame.display.set_mode((W, H))
-    drone = libardrone.ARDrone()
+    drone = libardrone.ARDrone(True)
+    drone.reset()
     clock = pygame.time.Clock()
     running = True
     while running:
@@ -52,8 +54,10 @@ def main():
                     running = False
                 # takeoff / land
                 elif event.key == pygame.K_RETURN:
+                    print("return")
                     drone.takeoff()
                 elif event.key == pygame.K_SPACE:
+                    print("space")
                     drone.land()
                 # emergency
                 elif event.key == pygame.K_BACKSPACE:
@@ -101,13 +105,17 @@ def main():
                     drone.speed = 1.0
 
         try:
-            surface = pygame.image.fromstring(drone.image, (W, H), 'RGB')
+            # print pygame.image
+            pixelarray = drone.get_image()
+            if pixelarray != None:
+                surface = pygame.surfarray.make_surface(pixelarray)
+                rotsurface = pygame.transform.rotate(surface, 270)
+                screen.blit(rotsurface, (0, 0))
             # battery status
             hud_color = (255, 0, 0) if drone.navdata.get('drone_state', dict()).get('emergency_mask', 1) else (10, 10, 255)
             bat = drone.navdata.get(0, dict()).get('battery', 0)
             f = pygame.font.Font(None, 20)
             hud = f.render('Battery: %i%%' % bat, True, hud_color)
-            screen.blit(surface, (0, 0))
             screen.blit(hud, (10, 10))
         except:
             pass

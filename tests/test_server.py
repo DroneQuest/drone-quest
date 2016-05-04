@@ -42,5 +42,6 @@ def test_imgdata_with_data(drone):
     assert drone.image == imgdata(drone)
 
 def test_imgdata_no_data(drone):
-    drone.image = None
+    import numpy
+    drone.image = numpy.array(None)
     assert drone.image == imgdata(drone)
