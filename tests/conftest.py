@@ -88,6 +88,7 @@ def controller():
 @pytest.fixture()
 def drone_listener():
     from leap_motion.ar_leap import DroneListener
+    Drone._talk_to_drone = lambda self, route: return "Mock Object" 
     return DroneListener()
 
 
