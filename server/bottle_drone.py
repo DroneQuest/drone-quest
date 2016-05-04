@@ -1,14 +1,15 @@
 """Set up a bottle server to accept post requests commanding the drone."""
 from bottle import post, run, hook, get, abort
+from bottle import response as response_module
 
 from venthur_api import libardrone
-from server.socket_drone import PORT
+PORT = 3000
 
 
 @hook('after_request')
 def enable_cors(dependency_injection=None):
     """Allow control headers."""
-    response = dependency_injection if dependency_injection else response
+    response = dependency_injection if dependency_injection else response_module
     response.headers['Access-Control-Allow-Origin'] = '*'
 
 

@@ -11,8 +11,8 @@ def test_initialization(controller, drone_listener):
 
 def test_connect(controller, drone_listener):
     """Test if the drone connects properly."""
-    drone_listener.on_init(controller)
-    assert drone_listener.start_time
+    drone_listener.on_connect(controller)
+    assert controller._test_only_gestures == ["swipe", "key tap"]
 
 
 def test_disconnect(controller, drone_listener):
