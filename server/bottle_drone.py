@@ -8,8 +8,7 @@ from server.socket_drone import PORT
 @hook('after_request')
 def enable_cors(dependency_injection=None):
     """Allow control headers."""
-    if dependency_injection:
-        response = dependency_injection
+    response = dependency_injection if dependency_injection else response
     response.headers['Access-Control-Allow-Origin'] = '*'
 
 
