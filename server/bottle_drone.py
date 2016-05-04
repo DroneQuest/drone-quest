@@ -2,6 +2,7 @@
 from bottle import post, run, hook, response, get, abort
 
 from venthur_api import libardrone
+from server.socket_drone import PORT
 
 
 drone = libardrone.ARDrone()
@@ -33,7 +34,7 @@ def do(command):
 
 
 try:
-    run(host='127.0.0.1', port=8080)
+    run(host='127.0.0.1', port=PORT)
 finally:
     drone.land()
     drone.halt()
