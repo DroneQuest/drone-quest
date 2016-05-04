@@ -18,6 +18,15 @@ class MockDrone(object):
     land = lambda self: None
 
 
+class MockResponse(object):
+    headers = {'Access-Control-Allow-Origin': "default_value!"}
+
+
 @pytest.fixture()
 def drone():
     return MockDrone()
+
+
+@pytest.fixture()
+def response():
+    return MockResponse()
