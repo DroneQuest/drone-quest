@@ -1,8 +1,3 @@
-
-try:
-    from venthur_api import libardrone
-except ImportError:
-    import libardrone
 import time
 try:
     import Leap
@@ -12,8 +7,9 @@ import sys
 import requests
 # from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
-NET_LOC = "http://127.0.0.1:3000"
-# drone = libardrone.ARDrone()
+from server.bottle_drone import DRONE_SERVER_ADDRESS
+
+NET_LOC = DRONE_SERVER_ADDRESS
 
 
 class DroneListener(Leap.Listener):

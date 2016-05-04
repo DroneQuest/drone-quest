@@ -5,7 +5,10 @@ import json
 from adetaylor_api.libardrone import libardrone
 
 drone = libardrone.ARDrone2()
+IP = '127.0.0.1'
 PORT = 3000
+
+DRONE_SERVER_ADDRESS = ':'.join(IP, str(PORT))
 
 
 @hook('after_request')
@@ -57,7 +60,7 @@ def do(command, drone=None):
 if __name__ == "__main__":
     GLOBAL_DRONE = libardrone.ARDrone()
     try:
-        run(host='127.0.0.1', port=PORT)
+        run(host=IP, port=PORT)
     finally:
         GLOBAL_DRONE.land()
         GLOBAL_DRONE.halt()
