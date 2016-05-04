@@ -101,10 +101,25 @@ def controller():
     return MockController()
 
 
+@pytest.fixture(params=(-1000, -2000, -3000))
+def landing_vy(request):
+    return request.param
+
+
 @pytest.fixture()
 def drone_listener():
     from leap_motion.ar_leap import DroneListener
-    return DroneListener()
+    dl = DroneListener()
+    return dl
+
+
+@pytest.fixture()
+def flying_drone_landing(landing_vy):
+    from leap_motion.ar_leap import DroneListener
+    dl = DroneListener()
+    dl.flying = True
+    dl._test_only_set_palm_velocity(0, landing_vy, 0)
+    return dl
 
 
 @pytest.fixture()
