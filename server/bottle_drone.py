@@ -16,16 +16,14 @@ def enable_cors(dependency_injection=None):
 @get('/navdata')
 def navdata(drone=None):
     """Return packet of navdata."""
-    if drone is None:
-        drone = GLOBAL_DRONE
+    drone = GLOBAL_NAME if drone is None else drone
     return drone.navdata
 
 
 @post('/do/<command>')
 def do(command, drone=None):
     """Execute the given command from the route."""
-    if drone is None:
-        drone = GLOBAL_DRONE
+    drone = GLOBAL_DRONE if drone is None else drone
     try:
         print('Command received: {}'.format(command))
         getattr(drone, command)()
