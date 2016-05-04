@@ -288,8 +288,8 @@ def test_do_not_move_left(controller, drone_listener, position_x):
 
 
 @pytest.mark.parametrize("position_x", [px for px in range(-100, -50, 10)])
-"""Test if the drone does not move left when hand is closed."""
 def test_move_left_hand_closed(controller, drone_listener, position_x):
+    """Test if the drone does not move left when hand is closed."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
