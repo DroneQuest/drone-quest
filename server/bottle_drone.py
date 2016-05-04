@@ -18,8 +18,12 @@ def imgdata():
     """Return the current drone image."""
     print(type(drone.image))
     # should be type bytes, not unicode
-    print('IMGDATA:')
-    print(drone.image)
+    image = drone.image
+    if image:
+        print('IMGDATA IS NULL:')
+    else:
+        print('IMGDATA HAS VALUE')
+        print(drone.image)
     response.content_type = 'image/x-rgb'
     return drone.image
 
@@ -27,8 +31,8 @@ def imgdata():
 @get('/navdata')
 def navdata():
     """Return packet of navdata."""
-    print('NAVDATA:')
-    print(drone.navdata)
+    # print('NAVDATA:')
+    # print(drone.navdata)
     response.content_type = 'application/json'
     return json.dumps(drone.navdata, ensure_ascii=False)
 
