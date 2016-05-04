@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Test the drone server."""
 import pytest
+import json
 from server.bottle_drone import navdata, do, enable_cors
 from bottle import HTTPError
 
@@ -11,7 +12,7 @@ VALID_COMMANDS = (
     "turn_left turn_right hover takeoff land"
 ).split()
 
-COMMAND_TESTS_PASS = [(message, "Command executed: {}".format(message)) for message in VALID_COMMANDS]
+COMMAND_TESTS_PASS = [(message, json.dumps({"some": "json"})) for message in VALID_COMMANDS]
 COMMAND_TESTS_FAIL = [("invalid_method", "Bad Command: invalid_method")]
 
 
@@ -29,7 +30,7 @@ def test_dysfunctional_command(drone, message, expected_response):
 
 def test_nav_data(drone):
     response = navdata(drone=drone)
-    assert response == drone.navdata
+    assert response == json.dumps(drone.navdata)
 
 
 def test_enable_cors(response):
