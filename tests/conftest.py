@@ -4,7 +4,7 @@ from json import dumps
 
 class MockDrone(object):
     # lambdas for brevity
-    navdata = dumps({"some": "json"})
+    navdata = {"some": "json"}
     move_left = lambda self: None
     move_right = lambda self: None
     move_forward = lambda self: None

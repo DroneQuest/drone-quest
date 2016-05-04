@@ -28,8 +28,9 @@ def test_dysfunctional_command(drone, message, expected_response):
 
 
 def test_nav_data(drone):
+    import json
     response = navdata(drone=drone)
-    assert response == drone.navdata
+    assert response == json.dumps(drone.navdata)
 
 
 def test_enable_cors(response):
