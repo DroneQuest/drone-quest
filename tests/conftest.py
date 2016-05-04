@@ -17,7 +17,7 @@ class MockDrone(object):
     hover = lambda self: None
     takeoff = lambda self: None
     land = lambda self: None
-    image = numpy.array([["some", "rgba"], ["some", "rgba"]])
+    image = numpy.array(object)
 
 
 class MockResponse(object):
