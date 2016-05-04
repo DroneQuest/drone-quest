@@ -5,7 +5,6 @@ from venthur_api import libardrone
 from server.socket_drone import PORT
 
 
-drone = libardrone.ARDrone()
 
 
 @hook('after_request')
@@ -33,8 +32,10 @@ def do(command):
         abort(404, 'Bad Command: {}'.format(command))
 
 
-try:
-    run(host='127.0.0.1', port=PORT)
-finally:
-    drone.land()
-    drone.halt()
+if __name__ == "__main__":
+    drone = libardrone.ARDrone()
+    try:
+        run(host='127.0.0.1', port=PORT)
+    finally:
+        drone.land()
+        drone.halt()
