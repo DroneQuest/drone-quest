@@ -22,6 +22,37 @@ class MockResponse(object):
     headers = {'Access-Control-Allow-Origin': "default_value!"}
 
 
+class MockHands(object):
+    class palm_velocity(object):
+        x = 0
+        y = 0
+        z = 0
+
+    class palm_position(object):
+        x = 0
+        y = 0
+        z = 0
+
+    grab_strength = 0
+
+
+class MockFrame(object):
+    hands = [MockHands(), MockHands()]
+
+class MockController(object):
+
+    class config(object):
+        def save(self):
+            return None
+
+    def enable_gesture(self, *args):
+        return None
+
+    def frame(self):
+        return MockFrame()
+
+
+
 @pytest.fixture()
 def drone():
     return MockDrone()
@@ -30,3 +61,8 @@ def drone():
 @pytest.fixture()
 def response():
     return MockResponse()
+
+
+@pytest.fixture()
+def controller():
+    return MockController()
