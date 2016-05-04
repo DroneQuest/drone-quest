@@ -40,16 +40,20 @@ class MockFrame(object):
     hands = [MockHands(), MockHands()]
 
 
+class MockConfig(object):
+    def save(self):
+        return True
+
+
 class MockController(object):
 
     _test_only_mock_frame = MockFrame()
+    config = MockConfig()
+    _test_only_gestures = []
 
-    class config(object):
-        def save(self):
-            return None
 
     def enable_gesture(self, *args):
-        return None
+        self._test_only_gestures.append(args[0])
 
     def frame(self):
         return self._test_only_mock_frame
