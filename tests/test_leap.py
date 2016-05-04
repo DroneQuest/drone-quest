@@ -295,6 +295,18 @@ def test_move_left_hand_closed(controller, drone_listener, position_x):
     drone_listener.on_frame(controller)
     assert history == []
 
+
+@pytest.mark.parametrize("positions", [position for position in [(50, 0, 0), (0, 50, 0), (0, 0, 50)]])
+def test_do_not_move_is_grounded(controller, drone_listener, positions):
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = False
+    controller._test_only_set_palm_position(positions[0], positions[1], positions[2])
+    controller._test_only_set_grab_strength(0)
+    drone_listener.on_frame(controller)
+    assert history == []
+
+
 # @pytest.mark.parametrize("s, vx, vy, vz, px, py, pz, f", LANDING_TESTS)
 # def test_hand_position_for_landing(controller, drone_listener, s, vx, vy, vz, px, py, pz, f):
 # # def test_hand_position(controller, drone_listener, requests):
