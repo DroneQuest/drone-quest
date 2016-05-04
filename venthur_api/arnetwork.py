@@ -77,6 +77,11 @@ class ARDroneNetworkProcess(multiprocessing.Process):
                             # continue with the last one
                             break
                     w, h, image, t = arvideo.read_picture(data)
+                    print('IMAGE DATA RECEIVED')
+                    print('w: {}, h: {}, t: {}'.format(w, h, t))
+                    print('IMAGE:')
+                    print(type(image))
+                    print(image)
                     self.video_pipe.send(image)
                 elif i == nav_socket:
                     while 1:

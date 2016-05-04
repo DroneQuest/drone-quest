@@ -20,10 +20,10 @@ def imgdata():
     # should be type bytes, not unicode
     image = drone.image
     if image:
-        print('IMGDATA IS NULL:')
-    else:
         print('IMGDATA HAS VALUE')
         print(drone.image)
+    # else:
+    #     print('IMGDATA IS NULL:')
     response.content_type = 'image/x-rgb'
     return drone.image
 
@@ -44,7 +44,8 @@ def do(command):
         print('Command received: {}'.format(command))
         getattr(drone, command)()
         print('Command executed: {}'.format(command))
-        return 'Command executed: {}'.format(command)
+        response.content_type = 'application/json'
+        return json.dumps(drone.navdata, ensure_ascii=False)
     except AttributeError:
         print('Bad Command: {}'.format(command))
         abort(404, 'Bad Command: {}'.format(command))
