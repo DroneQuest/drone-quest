@@ -9,7 +9,7 @@ import sys
 import requests
 # from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
-NET_LOC = "http://127.0.0.1:8083"
+NET_LOC = "http://127.0.0.1:9002"
 # drone = libardrone.ARDrone()
 
 
@@ -28,7 +28,7 @@ class DroneListener(Leap.Listener):
 
         controller.enable_gesture(Leap.Gesture.TYPE_SWIPE)
         # controller.enable_gesture(Leap.Gesture.TYPE_CIRCLE)
-        # controller.enable_gesture(Leap.Gesture.TYPE_KEY_TAP)
+        controller.enable_gesture(Leap.Gesture.TYPE_KEY_TAP)
 
         # controller.config.set("Gesture.Circle.MinRadius", 100.0)
 
@@ -45,8 +45,8 @@ class DroneListener(Leap.Listener):
     def on_frame(self, controller):
         """Read frames from the drone."""
         # Preven leap from reading GARBAGE BITCHES
-        if (time.time() - self.start_time) < 1.5:
-            return
+        # if (time.time() - self.start_time) < 1.5:
+            # return
 
         frame = controller.frame()
 
@@ -64,14 +64,37 @@ class DroneListener(Leap.Listener):
         #     if len(hands.fingers) <= 1:
         # if hand.palm_velocity.y > 100:
         if self.flying is False:
-            if hand.grab_strength == 0:
-                requests.get(NET_LOC + "/do/takeoff")
-                requests.get(NET_LOC + "/do/hover")
-                self.flying = True
+            if hand.grab_strength == 1:
+                if hand.palm_velocity.y >= 1000:
+                    print("TAKEOFF AND HOVER")
+                    requests.post(NET_LOC + "/do/takeoff")
+                    requests.post(NET_LOC + "/do/hover")
+                    self.flying = True
 
-        if hand.palm_velocity.y <= -100:
-            requests.get(NET_LOC + "/do/land")
-            self.flying = False
+        elif self.flying is True:
+            if hand.grab_strength == 1:
+                if hand.palm_velocity.y <= -1000:
+                    print("LAND N STUFF")
+                    requests.post(NET_LOC + '/do/land')
+                    self.flying = False
+            elif hand.grab_strength < 0.2:
+                if hand.palm_position.z <= -50:
+                    print("MOVE FORWARD")
+                    requests.post(NET_LOC + '/do/move_forward')
+                elif hand.palm_position.z >= 50:
+                    print("MOVE BACKWARD")
+                    requests.post(NET_LOC + '/do/move_backward')
+                elif hand.palm_position.x >= 50:
+                    print("MOVE RIGHT")
+                    requests.post(NET_LOC + '/do/move_right')
+                elif hand.palm_position.x <= -50:
+                    print("MOVE LEFT")
+                    requests.post(NET_LOC + '/do/move_left')
+                elif hand.palm_velocity.y <= 10 and hand.palm_velocity.y >= -10:
+                    print("YO. STOP IT.")
+                    requests.post(NET_LOC + '/do/hover')
+
+
 
 
 if __name__ == '__main__':
