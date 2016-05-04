@@ -31,23 +31,18 @@ import sys
 import threading
 import multiprocessing
 
-import arnetwork
+from .arnetwork import ARDroneNetworkProcess, ARDRONE_COMMAND_ADDR
 
 import time
 import numpy as np
 
 __author__ = "Bastian Venthur"
 
-ARDRONE_NAVDATA_PORT = 5554
-ARDRONE_VIDEO_PORT = 5555
-ARDRONE_COMMAND_PORT = 5556
-ARDRONE_CONTROL_PORT = 5559
 
 SESSION_ID = "943dac23"
 USER_ID = "36355d78"
 APP_ID = "21d958e4"
 
-DEBUG = False
 
 # 0: "Not defined"
 # 131072:  "Landed"
@@ -151,7 +146,7 @@ class ARDrone(object):
 
         self.navdata = {0: {key: 0 for key in NAVDATA_KEYS}}
 
-        self.network_process = arnetwork.ARDroneNetworkProcess(
+        self.network_process = ARDroneNetworkProcess(
             com_pipe_other,
             is_ar_drone_2,
             self,
@@ -161,7 +156,6 @@ class ARDrone(object):
 
         self.image = np.zeros(self.image_shape, np.uint8)
         self.time = 0
-
         self.last_command_is_hovering = True
 
         time.sleep(1.0)
@@ -436,7 +430,7 @@ def at_ftrim(seq):
 
 def at_zap(seq, stream):
     """
-    Selects which video stream to send on the video UDP port.
+    Select which video stream to send on the video UDP port.
 
     Parameters:
     seq -- sequence number
@@ -528,7 +522,8 @@ def at(command, seq, params):
             param_str += ',"' + p + '"'
     msg = "AT*%s=%i%s\r" % (command, seq, param_str)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(msg.encode("utf-8"), ("192.168.1.1", ARDRONE_COMMAND_PORT))
+    sock.sendto(msg.encode("utf-8"), ARDRONE_COMMAND_ADDR)
+
 
 def f2i(f):
     """Interpret IEEE-754 floating-point value as signed integer.

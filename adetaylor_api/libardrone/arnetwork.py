@@ -1,3 +1,6 @@
+"""
+This module provides access to the data provided by the AR.Drone.
+"""
 # Copyright (c) 2011 Bastian Venthur
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,14 +22,24 @@
 # THE SOFTWARE.
 import logging
 
-"""
-This module provides access to the data provided by the AR.Drone.
-"""
 import threading
 import select
 import socket
-import multiprocessing
-import libardrone
+# import multiprocessing
+from . import libardrone, arvideo
+
+INIT_BYTES = b'\x01\x00\x00\x00'
+ARDRONE_IP = '192.168.1.1'
+ARDRONE_NAVDATA_PORT = 5554
+ARDRONE_VIDEO_PORT = 5555
+ARDRONE_COMMAND_PORT = 5556
+ARDRONE_CONTROL_PORT = 5559
+
+ARDRONE_NAVDATA_ADDR = (ARDRONE_IP, ARDRONE_NAVDATA_PORT)
+ARDRONE_VIDEO_ADDR = (ARDRONE_IP, ARDRONE_VIDEO_PORT)
+ARDRONE_COMMAND_ADDR = (ARDRONE_IP, ARDRONE_COMMAND_PORT)
+ARDRONE_CONTROL_ADDR = (ARDRONE_IP, ARDRONE_CONTROL_PORT)
+DEBUG = False
 
 
 class ARDroneNetworkProcess(threading.Thread):
@@ -36,17 +49,17 @@ class ARDroneNetworkProcess(threading.Thread):
     data and sends it to the IPCThread.
     """
 
-    def __init__(self, com_pipe, is_ar_drone_2, drone):
+    def __init__(self, com_pipe, is_ar_drone_2, drone, use_video=True):
         threading.Thread.__init__(self)
         self._drone = drone
         self.com_pipe = com_pipe
         self.is_ar_drone_2 = is_ar_drone_2
         self.stopping = False
         if is_ar_drone_2:
-            import ar2video
-            self.ar2video = ar2video.ARVideo2(self._drone, libardrone.DEBUG)
+            from . import ar2video
+            self.ar2video = ar2video.ARVideo2(self._drone, DEBUG)
         else:
-            import arvideo
+            self.ar2video = None
 
     def run(self):
 
@@ -54,21 +67,25 @@ class ARDroneNetworkProcess(threading.Thread):
             logging.warn('Connection to ardrone')
             if self.is_ar_drone_2:
                 video_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                video_socket.connect(('192.168.1.1', libardrone.ARDRONE_VIDEO_PORT))
+                video_socket.connect(ARDRONE_VIDEO_ADDR)
                 video_socket.setblocking(0)
             else:
                 video_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 video_socket.setblocking(0)
-                video_socket.bind(('', libardrone.ARDRONE_VIDEO_PORT))
-                video_socket.sendto("\x01\x00\x00\x00", ('192.168.1.1', libardrone.ARDRONE_VIDEO_PORT))
+                video_socket.bind(('', ARDRONE_VIDEO_PORT))
+                video_socket.sendto(INIT_BYTES, ARDRONE_VIDEO_ADDR)
 
-            nav_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+            nav_socket = socket.socket(
+                socket.AF_INET,
+                socket.SOCK_DGRAM,
+                socket.IPPROTO_UDP,
+            )
             nav_socket.setblocking(0)
-            nav_socket.bind(('', libardrone.ARDRONE_NAVDATA_PORT))
-            nav_socket.sendto("\x01\x00\x00\x00", ('192.168.1.1', libardrone.ARDRONE_NAVDATA_PORT))
+            nav_socket.bind(('', ARDRONE_NAVDATA_PORT))
+            nav_socket.sendto(INIT_BYTES, ARDRONE_NAVDATA_ADDR)
 
             control_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            control_socket.connect(('192.168.1.1', libardrone.ARDRONE_CONTROL_PORT))
+            control_socket.connect(ARDRONE_CONTROL_ADDR)
             control_socket.setblocking(0)
             logging.warn('Connection established')
             return video_socket, nav_socket, control_socket
