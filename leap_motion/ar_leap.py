@@ -45,9 +45,11 @@ class DroneListener(Leap.Listener):
         """Exit."""
         pass
 
-    def on_frame(self, controller, dep_inj=None):
+    def _talk_to_drone(self, route):
+        return requests.post(route)
+
+    def on_frame(self, controller):
         """Read frames from the drone."""
-        requests = dep_inj if requests else requests
         # if (time.time() - self.start_time) < 1.5:
             # return
 
@@ -70,32 +72,32 @@ class DroneListener(Leap.Listener):
             if hand.grab_strength == 1:
                 if hand.palm_velocity.y >= 1000:
                     print("TAKEOFF AND HOVER")
-                    requests.post(NET_LOC + "/do/takeoff")
-                    requests.post(NET_LOC + "/do/hover")
+                    self._talk_to_drone(NET_LOC + "/do/takeoff")
+                    self._talk_to_drone(NET_LOC + "/do/hover")
                     self.flying = True
 
         elif self.flying is True:
             if hand.grab_strength == 1:
                 if hand.palm_velocity.y <= -1000:
                     print("LAND N STUFF")
-                    requests.post(NET_LOC + '/do/land')
+                    self._talk_to_drone(NET_LOC + '/do/land')
                     self.flying = False
             elif hand.grab_strength < 0.2:
                 if hand.palm_position.z <= -50:
                     print("MOVE FORWARD")
-                    requests.post(NET_LOC + '/do/move_forward')
+                    self._talk_to_drone(NET_LOC + '/do/move_forward')
                 elif hand.palm_position.z >= 50:
                     print("MOVE BACKWARD")
-                    requests.post(NET_LOC + '/do/move_backward')
+                    self._talk_to_drone(NET_LOC + '/do/move_backward')
                 elif hand.palm_position.x >= 50:
                     print("MOVE RIGHT")
-                    requests.post(NET_LOC + '/do/move_right')
+                    self._talk_to_drone(NET_LOC + '/do/move_right')
                 elif hand.palm_position.x <= -50:
                     print("MOVE LEFT")
-                    requests.post(NET_LOC + '/do/move_left')
+                    self._talk_to_drone(NET_LOC + '/do/move_left')
                 elif hand.palm_velocity.y <= 10 and hand.palm_velocity.y >= -10:
                     print("YO. STOP IT.")
-                    requests.post(NET_LOC + '/do/hover')
+                    self._talk_to_drone(NET_LOC + '/do/hover')
 
 
 
