@@ -58,7 +58,7 @@ DEBUG = False
 # 458752:  "Stabilizing"
 # 196608:  "Moving"
 # 262153 and 196613 and 262155 and 196614 and 458753:  "Undefined"
-ctrl_state_dict = {
+CTRL_STATE_DICT = {
     0: 0,
     131072: 1,
     393216: 2,
@@ -73,6 +73,19 @@ ctrl_state_dict = {
     196614: 11,
     458753: 12
 }
+
+NAVDATA_KEYS = [
+    'ctrl_state',
+    'battery',
+    'theta',
+    'phi',
+    'psi',
+    'altitude',
+    'vx',
+    'vy',
+    'vz',
+    'num_frames'
+]
 
 
 class ARDrone(object):
@@ -102,15 +115,15 @@ class ARDrone(object):
         self.com_watchdog_timer = threading.Timer(self.timer_t, self.commwdg)
         self.lock = threading.Lock()
         self.speed = 0.2
-        self.hd = hd
-        if (self.hd):
-            self.image_shape = (720, 1280, 3)
-        else:
-            self.image_shape = (360, 640, 3)
 
         time.sleep(0.5)
         self.config_ids_string = [SESSION_ID, USER_ID, APP_ID]
-        self.configure_multisession(SESSION_ID, USER_ID, APP_ID, self.config_ids_string)
+        self.configure_multisession(
+            SESSION_ID,
+            USER_ID,
+            APP_ID,
+            self.config_ids_string,
+        )
         self.set_session_id(self.config_ids_string, SESSION_ID)
         time.sleep(0.5)
         self.set_profile_id(self.config_ids_string, USER_ID)
@@ -125,18 +138,25 @@ class ARDrone(object):
         time.sleep(0.5)
         self.set_fps(self.config_ids_string, "30")
         time.sleep(0.5)
-        if (self.hd):
+        self.hd = hd
+        if self.hd:
+            self.image_shape = (720, 1280, 3)
             self.set_video_codec(self.config_ids_string, 0x83)
         else:
+            self.image_shape = (360, 640, 3)
             self.set_video_codec(self.config_ids_string, 0x81)
 
         self.last_command_is_hovering = True
         self.com_pipe, com_pipe_other = multiprocessing.Pipe()
 
-        self.navdata = dict()
-        self.navdata[0] = dict(zip(['ctrl_state', 'battery', 'theta', 'phi', 'psi', 'altitude', 'vx', 'vy', 'vz', 'num_frames'], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]))
+        self.navdata = {0: {key: 0 for key in NAVDATA_KEYS}}
 
-        self.network_process = arnetwork.ARDroneNetworkProcess(com_pipe_other, is_ar_drone_2, self)
+        self.network_process = arnetwork.ARDroneNetworkProcess(
+            com_pipe_other,
+            is_ar_drone_2,
+            self,
+            use_video=use_video,
+        )
         self.network_process.start()
 
         self.image = np.zeros(self.image_shape, np.uint8)
@@ -578,7 +598,7 @@ def decode_navdata(packet):
             values = struct.unpack_from("IIfffifffI", "".join(values))
             values = dict(zip(['ctrl_state', 'battery', 'theta', 'phi', 'psi', 'altitude', 'vx', 'vy', 'vz', 'num_frames'], values))
             # convert the millidegrees into degrees and round to int, as they
-            values['ctrl_state'] = ctrl_state_dict[values['ctrl_state']]
+            values['ctrl_state'] = CTRL_STATE_DICT[values['ctrl_state']]
             # are not so precise anyways
             for i in 'theta', 'phi', 'psi':
                 values[i] = int(values[i] / 1000)
