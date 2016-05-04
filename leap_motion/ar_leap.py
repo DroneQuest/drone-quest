@@ -4,7 +4,10 @@ try:
 except ImportError:
     import libardrone
 import time
-import Leap
+try:
+    import Leap
+except ImportError:
+    from tests.conftest import MockLeap as Leap
 import sys
 import requests
 # from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
