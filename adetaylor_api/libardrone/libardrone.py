@@ -327,39 +327,18 @@ class ARDrone(object):
         self.image = image
 
     def apply_command(self, command):
-        if command not in AVAILABLE_COMMANDS:
+        if command == 'emergency':
+            command = 'reset'
+
+        try:
+            getattr(self, command)()
+        except AttributeError:
             print("Command %s is not a recognized command" % command)
-
-        if command != "hover":
+        if any((command == "hover" and not self.last_command_is_hovering,
+                command in ('land', 'takeoff'))):
+            self.last_command_is_hovering = True
+        else:
             self.last_command_is_hovering = False
-
-        if (command == "emergency"):
-            self.reset()
-        elif (command == "land"):
-            self.land()
-            self.last_command_is_hovering = True
-        elif (command == "takeoff"):
-            self.takeoff()
-            self.last_command_is_hovering = True
-        elif (command == "move_left"):
-            self.move_left()
-        elif (command == "move_right"):
-            self.move_right()
-        elif (command == "move_down"):
-            self.move_down()
-        elif (command == "move_up"):
-            self.move_up()
-        elif (command == "move_backward"):
-            self.move_backward()
-        elif (command == "move_forward"):
-            self.move_forward()
-        elif (command == "turn_left"):
-            self.turn_left()
-        elif (command == "turn_right"):
-            self.turn_right()
-        elif (command == "hover" and not self.last_command_is_hovering):
-            self.hover()
-            self.last_command_is_hovering = True
 
 
 class ARDrone2(ARDrone):
