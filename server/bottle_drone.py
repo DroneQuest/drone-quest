@@ -1,27 +1,28 @@
 """Set up a bottle server to accept post requests commanding the drone."""
-from bottle import post, run, hook, response, get, abort
+from bottle import post, run, hook, get, abort
 
 from venthur_api import libardrone
-
-
-drone = libardrone.ARDrone()
+from server.socket_drone import PORT
 
 
 @hook('after_request')
-def enable_cors():
+def enable_cors(dependency_injection=None):
     """Allow control headers."""
+    response = dependency_injection if dependency_injection else response
     response.headers['Access-Control-Allow-Origin'] = '*'
 
 
 @get('/navdata')
-def navdata():
+def navdata(drone=None):
     """Return packet of navdata."""
+    drone = GLOBAL_NAME if drone is None else drone
     return drone.navdata
 
 
 @post('/do/<command>')
-def do(command):
+def do(command, drone=None):
     """Execute the given command from the route."""
+    drone = GLOBAL_DRONE if drone is None else drone
     try:
         print('Command received: {}'.format(command))
         getattr(drone, command)()
@@ -32,8 +33,10 @@ def do(command):
         abort(404, 'Bad Command: {}'.format(command))
 
 
-try:
-    run(host='127.0.0.1', port=8080)
-finally:
-    drone.land()
-    drone.halt()
+if __name__ == "__main__":
+    GLOBAL_DRONE = libardrone.ARDrone()
+    try:
+        run(host='127.0.0.1', port=PORT)
+    finally:
+        GLOBAL_DRONE.land()
+        GLOBAL_DRONE.halt()

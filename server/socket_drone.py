@@ -10,8 +10,8 @@ PORT = 3000
 IP = "127.0.0.1"
 
 PING = 0x00
-TAKE_OFF = "A"
-LAND = "B"
+TAKE_OFF = 0x01
+LAND = 0x02
 HOVER = 0x03
 MOVE_LEFT = 0x04
 MOVE_RIGHT = 0x05
@@ -69,12 +69,6 @@ def setup_server():
     server.bind((IP, PORT))
     server.listen(5)
     return server
-
-
-# def server_listen(server):
-#     """Accept connections from the client."""
-#     conn, addr = server.accept()
-#     return (conn, addr)
 
 
 def server_read(connection):
