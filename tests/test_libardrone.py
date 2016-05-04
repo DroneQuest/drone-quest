@@ -20,7 +20,7 @@
 
 import unittest
 try:
-    from venthur_api import libardrone
+    from adetaylor_api.libardrone import libardrone
 except ImportError:
     import libardrone
 

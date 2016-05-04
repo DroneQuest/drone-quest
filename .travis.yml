@@ -1,7 +1,12 @@
 language: python
 python:
   - "3.5"
-install: "pip install -e .[test]"
+  - "2.7"
+install:
+  # - sudo apt-get update
+  # - sudo apt-get install ffmpeg
+  - "pip install -e .[test]"
 script: tox
 notifications:
   slack: codefellows:4Wl9FSYY2d9JhcG9zYMYcKyk
+  email: false
