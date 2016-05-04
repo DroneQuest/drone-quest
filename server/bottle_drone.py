@@ -5,8 +5,6 @@ from venthur_api import libardrone
 from server.socket_drone import PORT
 
 
-
-
 @hook('after_request')
 def enable_cors():
     """Allow control headers."""
@@ -14,14 +12,18 @@ def enable_cors():
 
 
 @get('/navdata')
-def navdata():
+def navdata(drone=None):
     """Return packet of navdata."""
+    if drone is None:
+        drone = GLOBAL_DRONE
     return drone.navdata
 
 
 @post('/do/<command>')
-def do(command):
+def do(command, drone=None):
     """Execute the given command from the route."""
+    if drone is None:
+        drone = GLOBAL_DRONE
     try:
         print('Command received: {}'.format(command))
         getattr(drone, command)()
@@ -33,7 +35,7 @@ def do(command):
 
 
 if __name__ == "__main__":
-    drone = libardrone.ARDrone()
+    GLOBAL_DRONE = libardrone.ARDrone()
     try:
         run(host='127.0.0.1', port=PORT)
     finally:
