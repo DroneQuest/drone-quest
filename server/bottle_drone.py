@@ -39,5 +39,5 @@ if __name__ == "__main__":
     try:
         run(host='127.0.0.1', port=PORT)
     finally:
-        drone.land()
-        drone.halt()
+        GLOBAL_DRONE.land()
+        GLOBAL_DRONE.halt()
