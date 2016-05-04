@@ -56,7 +56,9 @@ class MockController(object):
 class MockLeap(object):
     class Listener(object):
         pass
-
+    class Gesture(object):
+        TYPE_SWIPE = "swipe"
+        TYPE_KEY_TAP = "key tap"
 
 @pytest.fixture()
 def drone():
@@ -71,3 +73,9 @@ def response():
 @pytest.fixture()
 def controller():
     return MockController()
+
+
+@pytest.fixture()
+def drone_listener():
+    from leap_motion.ar_leap import DroneListener
+    return DroneListener()
