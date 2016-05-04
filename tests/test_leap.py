@@ -96,8 +96,6 @@ def test_do_not_to_take_off_is_too_slow(controller, drone_listener, velocity_y):
     assert history == []
 
 
-
-
 @pytest.mark.parametrize("velocity_y", [vy for vy in range(-5000, -1000, 1000)])
 def test_try_to_land(controller, drone_listener, velocity_y):
     history = []
@@ -129,17 +127,17 @@ def test_do_not_land_is_on_ground(controller, drone_listener, velocity_y):
     controller._test_only_set_grab_strength(1)
     drone_listener.on_frame(controller)
     assert history == []
-#
-#
-# @pytest.mark.parametrize("velocity_y", [vy for vy in range(0, 1000, 100)])
-# def test_do_not_to_take_off_is_too_slow(controller, drone_listener, velocity_y):
-#     history = []
-#     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
-#     drone_listener.flying = False
-#     controller._test_only_set_palm_velocity(0, velocity_y, 0)
-#     controller._test_only_set_grab_strength(1)
-#     drone_listener.on_frame(controller)
-#     assert history == []
+
+
+@pytest.mark.parametrize("velocity_y", [vy for vy in range(1000, 0, -100)])
+def test_do_not_land_is_too_slow(controller, drone_listener, velocity_y):
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_velocity(0, velocity_y, 0)
+    controller._test_only_set_grab_strength(1)
+    drone_listener.on_frame(controller)
+    assert history == []
 
 
 # @pytest.mark.parametrize("s, vx, vy, vz, px, py, pz, f", LANDING_TESTS)
