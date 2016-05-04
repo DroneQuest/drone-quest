@@ -42,6 +42,8 @@ class MockFrame(object):
 
 class MockController(object):
 
+    _test_only_mock_frame = MockFrame()
+
     class config(object):
         def save(self):
             return None
@@ -50,7 +52,21 @@ class MockController(object):
         return None
 
     def frame(self):
-        return MockFrame()
+        return self._test_only_mock_frame
+
+    def _test_only_set_grab_strength(self, strength):
+        self._test_only_mock_frame[0].grab_strength = strength
+
+    def _test_only_set_palm_velocity(self, x, y, z):
+        self._test_only_mock_frame[0].palm_velocity.x = x
+        self._test_only_mock_frame[0].palm_velocity.y = y
+        self._test_only_mock_frame[0].palm_velocity.z = z
+
+    def _test_only_set_palm_position(self, x, y, z):
+        self._test_only_mock_frame[0].palm_position.x = x
+        self._test_only_mock_frame[0].palm_position.y = y
+        self._test_only_mock_frame[0].palm_position.z = z
+
 
 
 class MockLeap(object):
