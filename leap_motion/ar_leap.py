@@ -45,9 +45,9 @@ class DroneListener(Leap.Listener):
         """Exit."""
         pass
 
-    def on_frame(self, controller):
+    def on_frame(self, controller, dep_inj=None):
         """Read frames from the drone."""
-        # Preven leap from reading GARBAGE BITCHES
+        requests = dep_inj if requests else requests
         # if (time.time() - self.start_time) < 1.5:
             # return
 
@@ -55,7 +55,7 @@ class DroneListener(Leap.Listener):
 
         # for gesture in frame.gestures():
         #     pass
-        #     # don't have circle yet...BICTCHES
+        #     # don't have circle yet...
 
         hand = frame.hands[0]
 
