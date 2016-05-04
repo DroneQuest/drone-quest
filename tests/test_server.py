@@ -2,7 +2,7 @@
 """Test the drone server."""
 import pytest
 import json
-from server.bottle_drone import navdata, do, enable_cors
+from server.bottle_drone import navdata, do, enable_cors, imgdata
 from bottle import HTTPError
 
 NET_LOC = "http://127.0.0.1:3000/"
@@ -36,3 +36,11 @@ def test_nav_data(drone):
 def test_enable_cors(response):
     enable_cors(response)
     assert response.headers['Access-Control-Allow-Origin'] == '*'
+
+
+def test_imgdata_with_data(drone):
+    assert drone.image == imgdata(drone)
+
+def test_imgdata_no_data(drone):
+    drone.image = None
+    assert drone.image == imgdata(drone)
