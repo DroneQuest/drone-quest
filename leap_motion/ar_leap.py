@@ -12,7 +12,7 @@ import sys
 import requests
 # from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
-NET_LOC = "http://127.0.0.1:9002"
+NET_LOC = "http://127.0.0.1:3000"
 # drone = libardrone.ARDrone()
 
 
