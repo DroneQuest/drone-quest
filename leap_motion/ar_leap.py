@@ -1,8 +1,8 @@
 import time
-try:
-    import Leap
-except ImportError:
-    from tests.conftest import MockLeap as Leap
+# try:
+# import Leap
+# except ImportError:
+from tests.conftest import MockLeap as Leap
 import sys
 import requests
 # from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
@@ -29,7 +29,7 @@ class DroneListener(Leap.Listener):
         controller.enable_gesture(Leap.Gesture.TYPE_SWIPE)
         # controller.enable_gesture(Leap.Gesture.TYPE_CIRCLE)
         controller.enable_gesture(Leap.Gesture.TYPE_KEY_TAP)
-
+        assert type(Leap.Gesture.TYPE_KEY_TAP) == str
         # controller.config.set("Gesture.Circle.MinRadius", 100.0)
 
         controller.config.save()

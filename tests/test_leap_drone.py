@@ -225,7 +225,6 @@ def test_move_backward_hand_closed(controller, drone_listener, position_z):
     assert history == []
 
 
-
 @pytest.mark.parametrize("position_x", [px for px in range(50, 100, 10)])
 def test_move_right(controller, drone_listener, position_x):
     """Test if the drone moves right when hand is in correct position."""
@@ -260,7 +259,6 @@ def test_move_right_hand_closed(controller, drone_listener, position_x):
     controller._test_only_set_grab_strength(1)
     drone_listener.on_frame(controller)
     assert history == []
-
 
 
 @pytest.mark.parametrize("position_x", [px for px in range(-100, -50, 10)])
@@ -312,6 +310,7 @@ def test_do_not_move_is_grounded(controller, drone_listener, positions):
 
 
 def test_drone_rotates_left(controller, drone_listener):
+    """Test if the leap motion sends commands when the drone is rotating left."""
     history = []
     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
     drone_listener.flying = True
@@ -320,3 +319,26 @@ def test_drone_rotates_left(controller, drone_listener):
     controller._test_only_set_finger_positions(False, True, True, True, True)
     drone_listener.on_frame(controller)
     assert history == ['turn_left']
+
+
+def test_drone_rotates_right(controller, drone_listener):
+    """Test if the leap motion sends commands when the drone is rotating right."""
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_position(0, 50, 0)
+    controller._test_only_set_palm_velocity(0, 0, 0)
+    controller._test_only_set_finger_positions(True, True, True, True, False)
+    drone_listener.on_frame(controller)
+    assert history == ['turn_right']
+
+
+def test_drone_rotates_right_with_pink_and_ring(controller, drone_listener):
+    """Test if the leap motion sends commands when the drone is rotating right (2 fingas)."""
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_position(0, 50, 0)
+    controller._test_only_set_palm_velocity(0, 0, 0)
+    controller._test_only_set_finger_positions(True, True, True, False, False)
+    assert history == ['turn_right']

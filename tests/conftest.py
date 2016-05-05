@@ -69,8 +69,8 @@ class MockController(object):
     _test_only_gestures = []
 
 
-    def enable_gesture(self, *args):
-        self._test_only_gestures.append(args[0])
+    def enable_gesture(self, gesture):
+        self._test_only_gestures.append(gesture)
 
     def frame(self):
         return self._test_only_mock_frame
