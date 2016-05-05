@@ -11,6 +11,7 @@ from setuptools import setup, find_packages
 
 REQUIRES = [
     'bottle',
+    'numpy'
 ]
 TEST = [
     'pytest',

@@ -18,12 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import unittest
-try:
-    from adetaylor_api.libardrone import libardrone
-except ImportError:
-    import libardrone
 
+import unittest
+
+from . import libardrone
 
 class LibardroneTestCase(unittest.TestCase):
     def test_f2i(self):

@@ -2,8 +2,13 @@
 from bottle import post, run, hook, get, abort
 from bottle import response as response_module
 import json
-from venthur_api import libardrone
-PORT = 3000
+from adetaylor_api.libardrone import libardrone
+
+# drone = libardrone.ARDrone2()
+IP = '127.0.0.1'
+PORT = 4000
+
+DRONE_SERVER_ADDRESS = 'http://' + (':'.join((IP, str(PORT))))
 
 
 @hook('after_request')
@@ -20,12 +25,12 @@ def imgdata(drone=None):
     print(type(drone.image))
     # should be type bytes, not unicode
     image = drone.image
-    if image:
+    if image.any():
         print('IMGDATA HAS VALUE')
         print(drone.image)
-    # else:
-    #     print('IMGDATA IS NULL:')
-    response_module.content_type = 'image/x-rgb'
+    else:
+        print('IMGDATA IS NULL:')
+    # response.content_type = 'image/x-rgb'
     return drone.image
 
 
@@ -53,9 +58,9 @@ def do(command, drone=None):
 
 
 if __name__ == "__main__":
-    GLOBAL_DRONE = libardrone.ARDrone()
+    GLOBAL_DRONE = libardrone.ARDrone2()
     try:
-        run(host='127.0.0.1', port=PORT)
+        run(host=IP, port=PORT)
     finally:
         GLOBAL_DRONE.land()
         GLOBAL_DRONE.halt()

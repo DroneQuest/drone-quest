@@ -1,5 +1,6 @@
 import pytest
 from json import dumps
+import numpy
 
 
 class MockDrone(object):
@@ -16,7 +17,7 @@ class MockDrone(object):
     hover = lambda self: None
     takeoff = lambda self: None
     land = lambda self: None
-    image = [["some", "rgba"], ["some", "rgba"]]
+    image = numpy.array(object)
 
 
 class MockResponse(object):
@@ -33,6 +34,15 @@ class MockHands(object):
         x = 0
         y = 0
         z = 0
+
+    class MockFinger(object):
+        is_extended = True
+
+    fingers = [MockFinger(),
+               MockFinger(),
+               MockFinger(),
+               MockFinger(),
+               MockFinger()]
 
     grab_strength = 0
 

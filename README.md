@@ -90,16 +90,26 @@ The public repository is located here:
 
   git://github.com/venthur/python-ardrone.git
 
+At present the AR.Drone 2.0 has a separate fork here:
+
+  git://github.com/adetaylor/python-ardrone.git
 
 Requirements:
 -------------
 
-This software was tested with the following setup:
+This software was tested with the following setups:
 
   * Python 2.6.6
   * Psyco 1.6 (recommended)
   * Pygame 1.8.1 (only for the demo)
   * Unmodified AR.Drone firmware 1.5.1
+
+  * Python 2.7.6
+  * Unmodified AR.Drone firmware 2.0
+
+  * Python 3.5 
+  * Unmodified AR.Drone firmware 2.0
+
 
 
 License:
