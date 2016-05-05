@@ -333,12 +333,13 @@ def test_drone_rotates_right(controller, drone_listener):
     assert history == ['turn_right']
 
 
-# def test_drone_rotates_right_with_pink_and_ring(controller, drone_listener):
-#     """Test if the leap motion sends commands when the drone is rotating right (2 fingas)."""
-#     history = []
-#     drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
-#     drone_listener.flying = True
-#     controller._test_only_set_palm_position(0, 50, 0)
-#     controller._test_only_set_palm_velocity(0, 0, 0)
-#     controller._test_only_set_finger_positions(True, True, True, False, False)
-#     assert history == ['turn_right']
+def test_drone_rotates_right_with_pink_and_ring(controller, drone_listener):
+    """Test if the leap motion sends commands when the drone is rotating right (2 fingas)."""
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_position(0, 50, 0)
+    controller._test_only_set_palm_velocity(0, 0, 0)
+    controller._test_only_set_finger_positions(True, True, True, False, False)
+    drone_listener.on_frame(controller)
+    assert history == ['turn_right']
