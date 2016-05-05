@@ -4,7 +4,6 @@ from bottle import response as response_module
 import json
 from adetaylor_api.libardrone import libardrone
 
-# drone = libardrone.ARDrone2()
 IP = '127.0.0.1'
 PORT = 3000
 
