@@ -5,11 +5,12 @@ import json
 import webbrowser
 from adetaylor_api.libardrone import libardrone
 
+HTTP = 'http://'
 IP = '127.0.0.1'
 PORT = 3000
 
 # Need to startup on page served by node at port 8080
-DRONE_SERVER_ADDRESS = ':'.join((IP, str(PORT)))
+DRONE_SERVER_ADDRESS = ':'.join((HTTP, IP, str(PORT)))
 
 
 @hook('after_request')
@@ -59,6 +60,7 @@ def do(command, drone=None):
 
 
 def main():
+    global GLOBAL_DRONE
     GLOBAL_DRONE = libardrone.ARDrone2()
     try:
         run(host=IP, port=PORT)
