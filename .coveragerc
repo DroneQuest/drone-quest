@@ -4,6 +4,9 @@ omit =
     .tox/*
     leap_motion/Leap.py
     adetaylor_api/libardrone/demo.py
+    adetaylor_api/libardrone/libardone.py
+    adetaylor_api/libardrone/arnetwork.py
+    adetaylor_api/libardrone/demo.py
     adetaylor_api/libardrone/arvideo.py
     adetaylor_api/libardrone/ar2video.py
     adetaylor_api/libardrone/paveparser.py
