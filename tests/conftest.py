@@ -74,10 +74,10 @@ class MockController(object):
         self._test_only_mock_frame.hands[0].palm_position.z = z
 
 
-
 class MockLeap(object):
     class Listener(object):
         pass
+
     class Gesture(object):
         TYPE_SWIPE = "swipe"
         TYPE_KEY_TAP = "key tap"
