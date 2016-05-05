@@ -10,7 +10,7 @@ IP = '127.0.0.1'
 PORT = 3000
 
 # Need to startup on page served by node at port 8080
-DRONE_SERVER_ADDRESS = ':'.join((HTTP, IP, str(PORT)))
+DRONE_SERVER_ADDRESS = HTTP + ':'.join((IP, str(PORT)))
 
 
 @hook('after_request')
