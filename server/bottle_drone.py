@@ -6,9 +6,9 @@ from adetaylor_api.libardrone import libardrone
 
 # drone = libardrone.ARDrone2()
 IP = '127.0.0.1'
-PORT = 3000
+PORT = 3001
 
-DRONE_SERVER_ADDRESS = ':'.join((IP, str(PORT)))
+DRONE_SERVER_ADDRESS = 'http://' + ':'.join((IP, str(PORT)))
 
 
 @hook('after_request')
