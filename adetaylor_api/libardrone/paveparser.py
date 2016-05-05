@@ -30,9 +30,11 @@ Encapsulation (PaVE), which this class parses.
 """
 Usage: Pass in an output file object into the constructor, then call write on this.
 """
+
+
 class PaVEParser(object):
 
-    HEADER_SIZE_SHORT = 64; # sometimes header is longer
+    HEADER_SIZE_SHORT = 64  # sometimes header is longer
 
     def __init__(self, outfileobject):
         self.buffer = ""
@@ -107,7 +109,6 @@ class PaVEParser(object):
         self.buffer = self.buffer[eligible_index + header_size:]
         self.state = self.handle_payload
         return True
-
 
     def handle_misalignment(self):
         """Sometimes we start of in the middle of frame - look for the PaVE header."""
