@@ -333,8 +333,8 @@ class ARDrone(object):
 
 
 class ARDrone2(ARDrone):
-    def __init__(self, hd=False):
-        ARDrone.__init__(self, True, hd)
+    def __init__(self, hd=False, use_video=True):
+        ARDrone.__init__(self, True, hd, use_video=use_video)
 
 ###############################################################################
 # Low level AT Commands
