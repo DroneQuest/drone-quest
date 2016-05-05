@@ -95,10 +95,10 @@ class MockController(object):
         self._test_only_mock_frame.hands[0].fingers[3] = MockFinger(ring)
         self._test_only_mock_frame.hands[0].fingers[4] = MockFinger(pinky)
 
-
 class MockLeap(object):
     class Listener(object):
         pass
+
     class Gesture(object):
         TYPE_SWIPE = "swipe"
         TYPE_KEY_TAP = "key tap"

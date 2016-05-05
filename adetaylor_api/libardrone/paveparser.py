@@ -32,10 +32,10 @@ Usage: Pass in an output file object into the constructor, then call write on th
 """
 class PaVEParser(object):
 
-    HEADER_SIZE_SHORT = 64; # sometimes header is longer
+    HEADER_SIZE_SHORT = 64 # sometimes header is longer
 
     def __init__(self, outfileobject):
-        self.buffer = ""
+        self.buffer = b''
         self.state = self.handle_header
         self.outfileobject = outfileobject
         self.misaligned_frames = 0
@@ -64,7 +64,7 @@ class PaVEParser(object):
         reserved2, advertised_size, reserved3) = struct.unpack("<4sBBHIHHHHIIBBBBIIHBBBB2sI12s",
                                                                self.buffer[0:self.HEADER_SIZE_SHORT])
 
-        if signature != "PaVE":
+        if signature.decode('utf-8') != "PaVE":
             self.state = self.handle_misalignment
             return True
         self.buffer = self.buffer[header_size:]
@@ -73,7 +73,7 @@ class PaVEParser(object):
 
     def handle_header_drop_frames(self):
 
-        eligible_index = self.buffer.find('PaVE')
+        eligible_index = self.buffer.find(b'PaVE')
 
         if (eligible_index < 0):
             return False
@@ -98,7 +98,7 @@ class PaVEParser(object):
                 eligible_index = current_index
                 self.payload_size = payload_size
 
-            offset = self.buffer[current_index + 1:].find('PaVE') + 1
+            offset = self.buffer[current_index + 1:].find(b'PaVE') + 1
             if (offset == 0):
                 break
 
@@ -114,7 +114,7 @@ class PaVEParser(object):
         IFrame = False
         if self.align_on_iframe:
             while (not IFrame):
-                index = self.buffer.find('PaVE')
+                index = self.buffer.find(b'PaVE')
                 if index == -1:
                     return False
 
@@ -133,7 +133,7 @@ class PaVEParser(object):
                 if not IFrame:
                     self.buffer = self.buffer[header_size:]
         else:
-            index = self.buffer.find('PaVE')
+            index = self.buffer.find(b'PaVE')
             if index == -1:
                 return False
             self.buffer = self.buffer[index:]

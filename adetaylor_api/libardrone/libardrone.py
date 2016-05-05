@@ -24,17 +24,16 @@ V.1 This module was tested with Python 2.6.6 and AR.Drone vanilla firmware 1.5.1
 V.2.alpha
 """
 
-import logging
+import time
 import socket
 import struct
 import sys
 import threading
 import multiprocessing
+import numpy as np
 
 from .arnetwork import ARDroneNetworkProcess, ARDRONE_COMMAND_ADDR
 
-import time
-import numpy as np
 
 __author__ = "Bastian Venthur"
 
@@ -89,12 +88,12 @@ class ARDrone(object):
       MP4_360P_SLRS_CODEC = 0x84,
       H264_360P_SLRS_CODEC = 0x85,
       H264_720P_SLRS_CODEC = 0x86,
-      H264_AUTO_RESIZE_CODEC = 0x87,    // resolution is automatically adjusted according to bitrate
+      H264_AUTO_RESIZE_CODEC = 0x87, // resolution is automatically adjusted
       MP4_360P_H264_360P_CODEC = 0x88,
     """
 
     def __init__(self, is_ar_drone_2=False, hd=False, use_video=True, ):
-
+        """Initialize the AR Drone, with appropriate options flags."""
         self.seq_nr = 1
         self.timer_t = 0.2
         self.com_watchdog_timer = threading.Timer(self.timer_t, self.commwdg)
@@ -352,7 +351,7 @@ class ARDrone2(ARDrone):
 
 def at_ref(seq, takeoff, emergency=False):
     """
-    Basic behaviour of the drone: take-off/landing, emergency stop/reset)
+    Basic behaviour of the drone: take-off/landing, emergency stop/reset).
 
     Parameters:
     seq -- sequence number
@@ -369,7 +368,7 @@ def at_ref(seq, takeoff, emergency=False):
 
 def at_pcmd(seq, progressive, lr, fb, vv, va):
     """
-    Makes the drone move (translate/rotate).
+    Make the drone move (translate/rotate).
 
     Parameters:
     seq -- sequence number
@@ -607,4 +606,3 @@ if __name__ == "__main__":
         termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
         fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
         drone.halt()
-

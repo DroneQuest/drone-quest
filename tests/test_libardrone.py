@@ -18,16 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-import unittest
-try:
-    from adetaylor_api.libardrone import libardrone
-except ImportError:
-    import libardrone
+from adetaylor_api.libardrone import libardrone
 
 
-class LibardroneTestCase(unittest.TestCase):
-    def test_f2i(self):
-        self.assertEqual(libardrone.f2i(-0.8,), -1085485875)
-
-if __name__ == "__main__":
-    unittest.main()
+def test_f2i():
+    """Test that float-to-int function works as expected."""
+    assert libardrone.f2i(-0.8,) == -1085485875
