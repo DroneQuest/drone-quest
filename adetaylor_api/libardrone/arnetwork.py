@@ -57,6 +57,19 @@ CTRL_STATE_DICT = {
     458753: 12,  # "Undefined"
 }
 
+NAVDATA_KEYS = [
+    'ctrl_state',
+    'battery',
+    'theta',
+    'phi',
+    'psi',
+    'altitude',
+    'vx',
+    'vy',
+    'vz',
+    'num_frames',
+]
+
 
 class ARDroneNetworkProcess(threading.Thread):
     """ARDrone Network Process.
@@ -70,6 +83,7 @@ class ARDroneNetworkProcess(threading.Thread):
         self._drone = drone
         self.com_pipe = com_pipe
         self.is_ar_drone_2 = is_ar_drone_2
+        self.use_video = use_video
         self.stopping = False
         if is_ar_drone_2:
             from . import ar2video
@@ -80,17 +94,25 @@ class ARDroneNetworkProcess(threading.Thread):
     def run(self):
 
         def _connect():
-            logging.warn('Connection to ardrone')
-            if self.is_ar_drone_2:
-                video_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                video_socket.connect(ARDRONE_VIDEO_ADDR)
-                video_socket.setblocking(0)
+            logging.info('Connection to ardrone')
+            if self.use_video:
+                if self.is_ar_drone_2:
+                    video_socket = socket.socket(
+                        socket.AF_INET,
+                        socket.SOCK_STREAM
+                    )
+                    video_socket.connect(ARDRONE_VIDEO_ADDR)
+                    video_socket.setblocking(0)
+                else:
+                    video_socket = socket.socket(
+                        socket.AF_INET,
+                        socket.SOCK_DGRAM
+                    )
+                    video_socket.setblocking(0)
+                    video_socket.bind(('', ARDRONE_VIDEO_PORT))
+                    video_socket.sendto(INIT_BYTES, ARDRONE_VIDEO_ADDR)
             else:
-                video_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                video_socket.setblocking(0)
-                video_socket.bind(('', ARDRONE_VIDEO_PORT))
-                video_socket.sendto(INIT_BYTES, ARDRONE_VIDEO_ADDR)
-
+                video_socket = socket.socket()
             nav_socket = socket.socket(
                 socket.AF_INET,
                 socket.SOCK_DGRAM,
@@ -122,7 +144,15 @@ class ARDroneNetworkProcess(threading.Thread):
                 _disconnect(video_socket, nav_socket, control_socket)
                 video_socket, nav_socket, control_socket = _connect()
                 reconnection_needed = False
-            inputready, outputready, exceptready = select.select([nav_socket, video_socket, self.com_pipe, control_socket], [], [], 1.)
+            inputready, outputready, exceptready = select.select(
+                [nav_socket,
+                 video_socket,
+                 self.com_pipe,
+                 control_socket],
+                [],
+                [],
+                1.
+            )
             if len(inputready) == 0:
                 connection_lost += 1
                 reconnection_needed = True
@@ -153,7 +183,7 @@ class ARDroneNetworkProcess(threading.Thread):
                     if has_information:
                         self._drone.set_navdata(navdata)
                 elif i == self.com_pipe:
-                    _ = self.com_pipe.recv()
+                    self.com_pipe.recv()
                     self.stopping = True
                     break
                 elif i == control_socket:
@@ -162,15 +192,21 @@ class ARDroneNetworkProcess(threading.Thread):
                         try:
                             data = control_socket.recv(65536)
                             if len(data) == 0:
-                                logging.warning('Received an empty packet on control socket')
+                                logging.warning(
+                                    'Received an empty packet on '
+                                    'control socket'
+                                )
                                 reconnection_needed = True
                             else:
-                                logging.warning("Control Socket says : %s", data)
+                                logging.warning(
+                                    "Control Socket says : {}".format(data)
+                                )
                         except IOError:
                             break
         _disconnect(video_socket, nav_socket, control_socket)
 
     def terminate(self):
+        """Set the stopping flag to True for use elsewhere."""
         self.stopping = True
 
 

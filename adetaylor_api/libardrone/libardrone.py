@@ -20,18 +20,21 @@
 """
 Python library for the AR.Drone.
 
-V.1 This module was tested with Python 2.6.6 and AR.Drone vanilla firmware 1.5.1.
-V.2.alpha
+V.1 Tested with Python 2.6.6 and AR.Drone vanilla firmware 1.5.1.
+V.2 Tested with Python 2.7, Python 3.5 and vanilla firmware 2.0
 """
 
-import logging
 import socket
 import struct
 import sys
 import threading
 import multiprocessing
 
-from .arnetwork import ARDroneNetworkProcess, ARDRONE_COMMAND_ADDR
+from .arnetwork import (
+    ARDroneNetworkProcess,
+    ARDRONE_COMMAND_ADDR,
+    NAVDATA_KEYS,
+)
 
 import time
 import numpy as np
@@ -43,19 +46,6 @@ SESSION_ID = "943dac23"
 USER_ID = "36355d78"
 APP_ID = "21d958e4"
 
-
-NAVDATA_KEYS = [
-    'ctrl_state',
-    'battery',
-    'theta',
-    'phi',
-    'psi',
-    'altitude',
-    'vx',
-    'vy',
-    'vz',
-    'num_frames',
-]
 
 AVAILABLE_COMMANDS = [
     "emergency",
@@ -93,8 +83,8 @@ class ARDrone(object):
       MP4_360P_H264_360P_CODEC = 0x88,
     """
 
-    def __init__(self, is_ar_drone_2=False, hd=False, use_video=True, ):
-
+    def __init__(self, is_ar_drone_2=False, hd=False, use_video=True):
+        self.use_video = use_video
         self.seq_nr = 1
         self.timer_t = 0.2
         self.com_watchdog_timer = threading.Timer(self.timer_t, self.commwdg)
