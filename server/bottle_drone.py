@@ -58,7 +58,7 @@ def do(command, drone=None):
 
 
 if __name__ == "__main__":
-    GLOBAL_DRONE = libardrone.ARDrone2()
+    GLOBAL_DRONE = libardrone.ARDrone2(use_video=False)
     try:
         run(host=IP, port=PORT)
     finally:
