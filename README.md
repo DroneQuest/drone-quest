@@ -21,7 +21,7 @@ Linux/Mac OS:
 you@dronequest:~ $ git clone https://github.com/DroneQuest/drone-quest.git
 you@dronequest:~ $ cd drone-quest
 you@dronequest:~ $ python setup.py install
-you@dronequest:~ $ ./runapp.sh
+you@dronequest:~ $ droneserve
 ```
 
 Windows Systems:
@@ -29,7 +29,7 @@ Windows Systems:
 C:\Users\you> git clone https://github.com/DroneQuest/drone-quest.git
 C:\Users\you> cd drone-quest
 C:\Users\you> python setup.py install
-C:\Users\you> runapp.bat
+C:\Users\you> droneserve
 ```
 
 Point an http post request to [127.0.0.1:3000/do/&lt;command&gt;](http://127.0.0.1:3000/do/takeoff) to instruct the drone.
