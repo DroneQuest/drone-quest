@@ -55,7 +55,7 @@ class DroneListener(Leap.Listener):
         if var and not hand.fingers[0].is_extended:
             return 'left'
         var = True
-        for i in range(0, 3):
+        for i in range(0, 2):
             var = var and hand.fingers[i].is_extended
         if var and not hand.fingers[4].is_extended:
             return 'right'
