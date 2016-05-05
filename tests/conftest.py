@@ -1,41 +1,90 @@
+"""Mocks for a fake drone controller."""
 import pytest
-from json import dumps
+# from json
 import numpy
 
 
 class MockDrone(object):
-    # lambdas for brevity
-    navdata = {"some": "json"}
-    move_left = lambda self: None
-    move_right = lambda self: None
-    move_forward = lambda self: None
-    move_backward = lambda self: None
-    move_up = lambda self: None
-    move_down = lambda self: None
-    turn_left = lambda self: None
-    turn_right = lambda self: None
-    hover = lambda self: None
-    takeoff = lambda self: None
-    land = lambda self: None
+    """
+    Fake movement that the fake drone.
+
+    Lambdas for brevity.
+    """
+
     image = numpy.array(object)
+    navdata = {"some": "json"}
+
+    def move_right(self):
+        """Fake Drone moves right."""
+        return None
+
+    def move_left(self):
+        """Fake Drone moves left."""
+        return None
+
+    def move_forward(self):
+        """Fake Drone moves forward."""
+        return None
+
+    def move_backward(self):
+        """Fake Drone moves backward."""
+        return None
+
+    def move_up(self):
+        """Fake Drone moves up."""
+        return None
+
+    def move_down(self):
+        """Fake Drone moves down."""
+        return None
+
+    def turn_left(self):
+        """Fake Drone turns left."""
+        return None
+
+    def turn_right(self):
+        """Fake Drone turns right."""
+        return None
+
+    def hover(self):
+        """Fake Drone hover."""
+        return None
+
+    def takeoff(self):
+        """Fake Drone take the fuck off."""
+        return None
+
+    def land(self):
+        """Fake Drone lands."""
+        return None
 
 
 class MockResponse(object):
+    """Set a header to remove the fake CORS error."""
+
     headers = {'Access-Control-Allow-Origin': "default_value!"}
 
 
 class MockHands(object):
+    """Mock of Fake Hand method of the Leap controller."""
+
     class palm_velocity(object):
+        """Fake palm velocity of hand to controller."""
+
         x = 0
         y = 0
         z = 0
 
     class palm_position(object):
+        """Fake palm position of hand to controller."""
+
         x = 0
         y = 0
         z = 0
 
     class MockFinger(object):
+        """Mock of Fake Finger method of the Leap controller."""
+
         is_extended = True
 
     fingers = [MockFinger(),
@@ -48,31 +97,40 @@ class MockHands(object):
 
 
 class MockFrame(object):
+    """Fake on_frame method of the Fake Drone."""
+
     hands = [MockHands(), MockHands()]
 
 
 class MockConfig(object):
+    """Class to save the config of a fake drone instance."""
+
     def save(self):
+        """Save the created fake drone."""
         return True
 
 
 class MockFinger(object):
+    """Mock of the extension of the fake fingers on the fake drone."""
 
     def __init__(self, is_extended):
+        """Return whether a finger is extended or not."""
         self.is_extended = is_extended
 
 
 class MockController(object):
+    """Fake Controller."""
 
     _test_only_mock_frame = MockFrame()
     config = MockConfig()
     _test_only_gestures = []
 
-
-    def enable_gesture(self, *args):
-        self._test_only_gestures.append(args[0])
+    def enable_gesture(self, gesture):
+        """Append the fake guesture that is passed in."""
+        self._test_only_gestures.append(gesture)
 
     def frame(self):
+        """Set a fake frame."""
         return self._test_only_mock_frame
 
     def _test_only_set_grab_strength(self, strength):
@@ -105,7 +163,6 @@ class MockLeap(object):
 
 
 class Requests(object):
-
     def get(url):
         return None
 
@@ -115,21 +172,25 @@ class Requests(object):
 
 @pytest.fixture()
 def drone():
+    """Return a configured fake drone."""
     return MockDrone()
 
 
 @pytest.fixture()
 def response():
+    """Return a fake responses for a fake drone."""
     return MockResponse()
 
 
 @pytest.fixture()
 def controller():
+    """Return a configured fake drone."""
     return MockController()
 
 
 @pytest.fixture()
 def drone_listener():
+    """"""
     from leap_motion.ar_leap import DroneListener
     DroneListener._talk_to_drone = lambda self, route: "Mock Object"
     return DroneListener()
