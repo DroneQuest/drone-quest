@@ -309,3 +309,14 @@ def test_do_not_move_is_grounded(controller, drone_listener, positions):
     controller._test_only_set_grab_strength(0)
     drone_listener.on_frame(controller)
     assert history == []
+
+
+def test_drone_rotates_left(controller, drone_listener):
+    history = []
+    drone_listener._talk_to_drone = lambda route: history.append(route.split('/')[-1])
+    drone_listener.flying = True
+    controller._test_only_set_palm_position(0, 50, 0)
+    controller._test_only_set_palm_velocity(0, 0, 0)
+    controller._test_only_set_finger_positions(False, True, True, True, True)
+    drone_listener.on_frame(controller)
+    assert history == ['turn_left']
