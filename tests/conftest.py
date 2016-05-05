@@ -35,6 +35,15 @@ class MockHands(object):
         y = 0
         z = 0
 
+    class MockFinger(object):
+        is_extended = True
+
+    fingers = [MockFinger(),
+               MockFinger(),
+               MockFinger(),
+               MockFinger(),
+               MockFinger()]
+
     grab_strength = 0
 
 
