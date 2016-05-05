@@ -1,6 +1,11 @@
 [run]
 branch = True
-omit = .tox/*
+omit =
+  .tox/*
+  tests/*
+  adetaylor_api/*
+  setup.py
+  leap_motion/Leap.py
 
 [report]
 exclude_lines=
