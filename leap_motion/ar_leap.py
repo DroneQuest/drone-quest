@@ -1,7 +1,4 @@
 import time
-# try:
-# from tests.conftest import MockLeap as Leap
-# except ImportError:
 from . import Leap
 import sys
 import requests
