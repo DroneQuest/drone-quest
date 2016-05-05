@@ -189,10 +189,10 @@ def controller():
 
 
 @pytest.fixture()
-def drone_listener():
+def drone_listener(mocker):
     """"""
     from leap_motion.ar_leap import DroneListener
-    DroneListener._talk_to_drone = lambda self, route: "Mock Object"
+    mocker.patch('leap_motion.ar_leap.requests')
     return DroneListener()
 
 
