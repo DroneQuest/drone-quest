@@ -3,6 +3,14 @@ branch = True
 omit =
     .tox/*
     leap_motion/Leap.py
+    adetaylor_api/libardrone/demo.py
+    adetaylor_api/libardrone/libardrone.py
+    adetaylor_api/libardrone/arnetwork.py
+    adetaylor_api/libardrone/demo.py
+    adetaylor_api/libardrone/arvideo.py
+    adetaylor_api/libardrone/ar2video.py
+    adetaylor_api/libardrone/paveparser.py
+    adetaylor_api/libardrone/h264decoder.py
 
 [report]
 exclude_lines=
