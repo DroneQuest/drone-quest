@@ -11,6 +11,8 @@ TEST = [
     'tox',
     'coverage',
     'pytest-cov',
+    'mock',
+    'requests',
 ]
 DEV = [
     'ipython',
@@ -20,7 +22,6 @@ DEV = [
 setup(name='dronequest',
       version='0.9',
       description='Web front-end to control Parrot AR Drone.',
-      # long_description=README + '\n\n' + CHANGES,
       classifiers=[
           "Programming Language :: Python",
       ],
