@@ -6,14 +6,13 @@
 
 ### What is DroneQuest?
 DroneQuest is a collaborative project between students of Codefellows JavaScript 401 and Python 401 classes.
-The Python portion of this project allows users to connect any controller they want to an API endpoint and send commands to an
-[AR Parrot Drone](http://www.parrot.com/usa/products/ardrone-2/).
-
+The Python portion of this project allows users to connect any controller they want to an API endpoint and send commands to an [AR Parrot Drone](http://www.parrot.com/usa/products/ardrone-2/).
+The Javascript portion is an interactive locally hosted web page, allowing the user to control the drone and see feedback from it.
 ### How do I use DroneQuest?
 
 Dependencies:
 - [Python 2.7](https://www.python.org/download/releases/2.7/)
-- [Bottlepy](http://bottlepy.org/docs/dev/index.html)
+- [Bottle](http://bottlepy.org/docs/dev/index.html)
 - [numpy](http://www.numpy.org/)
 
 Linux/Mac OS:
@@ -33,9 +32,7 @@ C:\Users\you> droneserve
 ```
 
 Point an http post request to [127.0.0.1:3000/do/&lt;command&gt;](http://127.0.0.1:3000/do/takeoff) to instruct the drone.
-
-### Cool, what are your API endpoints?
-Check out our [API Endpoints Wiki Page](https://github.com/DroneQuest/drone-quest/wiki/API-Endpoints)
+Check out our [API Endpoints Wiki Page](https://github.com/DroneQuest/drone-quest/wiki/API-Endpoints) for a list of commands.
 
 
 ### How did you accomplish this project?
@@ -55,12 +52,13 @@ This project was built with
 This software was tested with the following setups:
 
   * Python 2.6.6
+  * Python 2.7.6 (better setup)
+  * Python 3.5 (only Leap Motion API is incompatible)
   * Psyco 1.6 (recommended)
   * Pygame 1.8.1 (only for the demo)
   * Unmodified AR.Drone firmware 1.5.1
-
-  * Python 2.7.6 (better setup)
   * Unmodified AR.Drone firmware 2.0
+
 
 ### License
 This software is published under the terms of the MIT License:
