@@ -16,7 +16,7 @@ Dependencies:
 - [Bottlepy](http://bottlepy.org/docs/dev/index.html)
 - [numpy](http://www.numpy.org/)
 
-Unix Systems:
+Linux/Mac OS:
 ```
 you@dronequest:~ $ git clone https://github.com/DroneQuest/drone-quest.git
 you@dronequest:~ $ cd drone-quest
@@ -32,7 +32,7 @@ C:\Users\you> python setup.py install
 C:\Users\you> runapp.bat
 ```
 
-Point an http post request to [127.0.0.1:3000/do/<command>](http://127.0.0.1:3000/do/takeoff) to instruct the drone.
+Point an http post request to [127.0.0.1:3000/do/&lt;command&gt;](http://127.0.0.1:3000/do/takeoff) to instruct the drone.
 
 ### Cool, what are your API endpoints?
 Check out our [API Endpoints Wiki Page](https://github.com/DroneQuest/drone-quest/wiki/API-Endpoints)
@@ -40,7 +40,7 @@ Check out our [API Endpoints Wiki Page](https://github.com/DroneQuest/drone-ques
 
 ### How did you accomplish this project?
 We used Bastian Venthur's [Useful Github Repo](https://github.com/venthur/python-ardrone), which was later
-improved by [Jonathan Hunt](https://github.com/jjh42/python-ardrone).
+improved by [Jonathan Hunt](https://github.com/jjh42/python-ardrone) and [Adrian Taylor](https://github.com/adetaylor/python-ardrone).
 
 In addition, a very useful tutorial can be found [here](http://www.playsheep.de/drone/).
 
