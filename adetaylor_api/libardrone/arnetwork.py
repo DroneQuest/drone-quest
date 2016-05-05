@@ -218,16 +218,26 @@ def decode_navdata(packet):
     offset = 0
     _ = struct.unpack_from("IIII", packet, offset)
     drone_state = dict()
-    drone_state['fly_mask'] = _[1] & 1 # FLY MASK : (0) ardrone is landed, (1) ardrone is flying
-    drone_state['video_mask'] = _[1] >> 1 & 1 # VIDEO MASK : (0) video disable, (1) video enable
-    drone_state['vision_mask'] = _[1] >> 2 & 1 # VISION MASK : (0) vision disable, (1) vision enable */
-    drone_state['control_mask'] = _[1] >> 3 & 1 # CONTROL ALGO (0) euler angles control, (1) angular speed control */
-    drone_state['altitude_mask'] = _[1] >> 4 & 1 # ALTITUDE CONTROL ALGO : (0) altitude control inactive (1) altitude control active */
-    drone_state['user_feedback_start'] = _[1] >> 5 & 1 # USER feedback : Start button state */
-    drone_state['command_mask'] = _[1] >> 6 & 1 # Control command ACK : (0) None, (1) one received */
-    drone_state['fw_file_mask'] = _[1] >> 7 & 1 # Firmware file is good (1) */
-    drone_state['fw_ver_mask'] = _[1] >> 8 & 1 # Firmware update is newer (1) */
-    drone_state['fw_upd_mask'] = _[1] >> 9 & 1 # Firmware update is ongoing (1) */
+    # FLY MASK : (0) ardrone is landed, (1) ardrone is flying
+    drone_state['fly_mask'] = _[1] & 1
+    # VIDEO MASK : (0) video disable, (1) video enable
+    drone_state['video_mask'] = _[1] >> 1 & 1
+    # VISION MASK : (0) vision disable, (1) vision enable */
+    drone_state['vision_mask'] = _[1] >> 2 & 1
+    # CONTROL ALGO (0) euler angles control, (1) angular speed control */
+    drone_state['control_mask'] = _[1] >> 3 & 1
+    # ALTITUDE CONTROL ALGO : (0) altitude control inactive (1) altitude control active */
+    drone_state['altitude_mask'] = _[1] >> 4 & 1
+    # USER feedback : Start button state */
+    drone_state['user_feedback_start'] = _[1] >> 5 & 1
+    # Control command ACK : (0) None, (1) one received */
+    drone_state['command_mask'] = _[1] >> 6 & 1
+    # Firmware file is good (1) */
+    drone_state['fw_file_mask'] = _[1] >> 7 & 1
+    # Firmware update is newer (1) */
+    drone_state['fw_ver_mask'] = _[1] >> 8 & 1
+    # Firmware update is ongoing (1) */
+    drone_state['fw_upd_mask'] = _[1] >> 9 & 1
     drone_state['navdata_demo_mask'] = _[1] >> 10 & 1 # Navdata demo : (0) All navdata, (1) only navdata demo */
     drone_state['navdata_bootstrap'] = _[1] >> 11 & 1 # Navdata bootstrap : (0) options sent in all or demo mode, (1) no navdata options sent */
     drone_state['motors_mask'] = _[1] >> 12 & 1 # Motor status : (0) Ok, (1) Motors problem */

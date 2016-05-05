@@ -19,10 +19,7 @@
 # THE SOFTWARE.
 
 import unittest
-try:
-    from adetaylor_api.libardrone import libardrone
-except ImportError:
-    import libardrone
+from adetaylor_api.libardrone import libardrone
 
 
 class LibardroneTestCase(unittest.TestCase):
