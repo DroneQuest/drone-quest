@@ -20,7 +20,7 @@ DEV = [
 
 
 setup(name='dronequest',
-      version='.9',
+      version='0.9',
       description='Web front-end to control Parrot AR Drone.',
       classifiers=[
           "Programming Language :: Python",
@@ -28,9 +28,9 @@ setup(name='dronequest',
       author=('Luc Ho, Munir Ibrahim, Norton Pengra, '
               'Kevin Sulonen and Will Weatherford'),
       author_email='',
-      url='',
+      url='https://github.com/DroneQuest/drone-quest',
       license='MIT',
-      keywords='python drone parrot hardware',
+      keywords='python drone parrot hardware leap_motion',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
@@ -41,7 +41,7 @@ setup(name='dronequest',
           'dev': DEV
       },
       entry_points="""\
-      [paste.app_factory]
       [console_scripts]
+      droneserve = server.bottle_drone:main
       """,
       )
