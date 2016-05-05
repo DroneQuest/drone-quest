@@ -56,6 +56,12 @@ class MockConfig(object):
         return True
 
 
+class MockFinger(object):
+
+    def __init__(self, is_extended):
+        self.is_extended = is_extended
+
+
 class MockController(object):
 
     _test_only_mock_frame = MockFrame()
@@ -82,6 +88,12 @@ class MockController(object):
         self._test_only_mock_frame.hands[0].palm_position.y = y
         self._test_only_mock_frame.hands[0].palm_position.z = z
 
+    def _test_only_set_finger_positions(self, thumb, index, middle, ring, pinky):
+        self._test_only_mock_frame.hands[0].fingers[0] = MockFinger(thumb)
+        self._test_only_mock_frame.hands[0].fingers[1] = MockFinger(index)
+        self._test_only_mock_frame.hands[0].fingers[2] = MockFinger(middle)
+        self._test_only_mock_frame.hands[0].fingers[3] = MockFinger(ring)
+        self._test_only_mock_frame.hands[0].fingers[4] = MockFinger(pinky)
 
 
 class MockLeap(object):
