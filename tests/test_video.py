@@ -3,6 +3,7 @@ import mock
 import os
 import io
 
+print('in test_video')
 
 # def test_h264_decoder():
 #     outfileobj = mock.Mock()

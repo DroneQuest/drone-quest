@@ -3,6 +3,7 @@ import pytest
 # from json
 import numpy
 
+print('in conftest')
 
 class MockDrone(object):
     """
@@ -153,6 +154,7 @@ class MockController(object):
         self._test_only_mock_frame.hands[0].fingers[3] = MockFinger(ring)
         self._test_only_mock_frame.hands[0].fingers[4] = MockFinger(pinky)
 
+
 class MockLeap(object):
     class Listener(object):
         pass
@@ -195,7 +197,7 @@ def controller(mocker):
 def drone_listener(mocker):
     """"""
     from leap_motion.ar_leap import DroneListener
-    mocker.patch('leap_motion.ar_leap.Leap', MockLeap)
+    # mocker.patch('leap_motion.ar_leap.Leap', MockLeap)
     return DroneListener()
 
 

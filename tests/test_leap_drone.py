@@ -2,6 +2,7 @@
 """Test the leap translation code."""
 import pytest
 
+print('in test_leap_drone')
 
 def test_initialization(controller, drone_listener):
     """Test if the drone starts up correctly."""

@@ -5,6 +5,8 @@ import json
 from server.bottle_drone import navdata, do, enable_cors, imgdata
 from bottle import HTTPError
 
+print('in test_server')
+
 NET_LOC = "http://127.0.0.1:3000/"
 
 VALID_COMMANDS = (

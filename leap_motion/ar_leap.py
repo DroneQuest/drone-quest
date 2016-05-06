@@ -1,11 +1,15 @@
 import time
 import sys
+# from tests.conftest import MockLeap as Leap
 if sys.version_info.major > 2:
     print("WARNING! Leap is not Python3 Compatible. Using mock object instead")
     from tests.conftest import MockLeap as Leap
 else:
     try:
-        from . import Leap
+        try:
+            import Leap
+        except ImportError:
+            from . import Leap
     except ImportError:
         print("WARNING! Running on Travis! Using mock object!")
         from tests.conftest import MockLeap as Leap

@@ -20,6 +20,7 @@
 
 from adetaylor_api.libardrone import libardrone
 
+print('in test_libardrone')
 
 def test_f2i():
     """Test that float-to-int function works as expected."""

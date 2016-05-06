@@ -2,14 +2,12 @@
 from bottle import post, run, hook, get, abort
 from bottle import response as response_module
 import json
-import webbrowser
 from adetaylor_api.libardrone import libardrone
 
 HTTP = 'http://'
 IP = '127.0.0.1'
 PORT = 3000
 
-# Need to startup on page served by node at port 8080
 DRONE_SERVER_ADDRESS = HTTP + ':'.join((IP, str(PORT)))
 
 
@@ -25,14 +23,12 @@ def imgdata(drone=None):
     """Return the current drone image."""
     drone = GLOBAL_DRONE if drone is None else drone
     print(type(drone.image))
-    # should be type bytes, not unicode
     image = drone.image
     if image.any():
         print('IMGDATA HAS VALUE')
         print(drone.image)
     else:
         print('IMGDATA IS NULL:')
-    # response.content_type = 'image/x-rgb'
     return drone.image
 
 
@@ -60,11 +56,11 @@ def do(command, drone=None):
 
 
 def main():
+    """Start server and initialize drone."""
     global GLOBAL_DRONE
     GLOBAL_DRONE = libardrone.ARDrone2(use_video=False)
     try:
         run(host=IP, port=PORT)
-        webbrowser.open_new_tab(DRONE_SERVER_ADDRESS)
     finally:
         GLOBAL_DRONE.land()
         GLOBAL_DRONE.halt()
