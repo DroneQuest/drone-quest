@@ -11,6 +11,7 @@ TEST = [
     'tox',
     'coverage',
     'pytest-cov',
+    'pytest-mock',
     'mock',
     'requests',
 ]

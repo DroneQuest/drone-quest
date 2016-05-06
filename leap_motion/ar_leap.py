@@ -1,8 +1,14 @@
 import time
-try:
+import sys
+if sys.version_info.major > 2:
+    print("WARNING! Leap is not Python3 Compatible. Using mock object instead")
     from tests.conftest import MockLeap as Leap
-except ImportError:
-    import Leap
+else:
+    try:
+        from . import Leap
+    except ImportError:
+        print("WARNING! Running on Travis! Using mock object!")
+        from tests.conftest import MockLeap as Leap
 import sys
 import requests
 # from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
