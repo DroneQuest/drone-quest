@@ -1,5 +1,6 @@
 import time
 from . import Leap
+# from tests.conftest import MockLeap as Leap
 import sys
 import requests
 # from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
