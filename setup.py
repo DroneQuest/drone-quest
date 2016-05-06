@@ -1,13 +1,5 @@
 """Setup for DroneQuest app."""
-import os
-
 from setuptools import setup, find_packages
-
-# here = os.path.abspath(os.path.dirname(__file__))
-# with open(os.path.join(here, 'README.md')) as f:
-#     README = f.read()
-# with open(os.path.join(here, 'CHANGES.md')) as f:
-#     CHANGES = f.read()
 
 REQUIRES = [
     'bottle',
@@ -19,26 +11,27 @@ TEST = [
     'tox',
     'coverage',
     'pytest-cov',
+    'pytest-mock',
+    'mock',
+    'requests',
 ]
-
 DEV = [
     'ipython',
 ]
 
 
 setup(name='dronequest',
-      version='0.0',
+      version='0.9',
       description='Web front-end to control Parrot AR Drone.',
-      # long_description=README + '\n\n' + CHANGES,
       classifiers=[
           "Programming Language :: Python",
       ],
       author=('Luc Ho, Munir Ibrahim, Norton Pengra, '
               'Kevin Sulonen and Will Weatherford'),
       author_email='',
-      url='',
+      url='https://github.com/DroneQuest/drone-quest',
       license='MIT',
-      keywords='python drone parrot hardware',
+      keywords='python drone parrot hardware leap_motion',
       packages=find_packages(),
       include_package_data=True,
       zip_safe=False,
@@ -49,7 +42,7 @@ setup(name='dronequest',
           'dev': DEV
       },
       entry_points="""\
-      [paste.app_factory]
       [console_scripts]
+      droneserve = server.bottle_drone:main
       """,
       )

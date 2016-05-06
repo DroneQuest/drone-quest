@@ -41,6 +41,7 @@ def test_enable_cors(response):
 def test_imgdata_with_data(drone):
     assert drone.image == imgdata(drone)
 
+
 def test_imgdata_no_data(drone):
     import numpy
     drone.image = numpy.array(None)
