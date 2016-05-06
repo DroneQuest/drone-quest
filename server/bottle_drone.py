@@ -60,11 +60,12 @@ def do(command, drone=None):
 
 
 def main():
+    """Start up the drone and run bottle server."""
     global GLOBAL_DRONE
-    GLOBAL_DRONE = libardrone.ARDrone2()
+    GLOBAL_DRONE = libardrone.ARDrone2(use_video=False)
     try:
         run(host=IP, port=PORT)
-        webbrowser.open_new_tab(DRONE_SERVER_ADDRESS)
+        # webbrowser.open_new_tab(DRONE_SERVER_ADDRESS)
     finally:
         GLOBAL_DRONE.land()
         GLOBAL_DRONE.halt()

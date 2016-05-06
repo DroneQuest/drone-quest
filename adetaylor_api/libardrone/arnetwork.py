@@ -26,8 +26,6 @@ import threading
 import select
 import socket
 import struct
-# import multiprocessing
-from . import arvideo
 
 INIT_BYTES = b'\x01\x00\x00\x00'
 ARDRONE_IP = '192.168.1.1'
@@ -93,6 +91,8 @@ class ARDroneNetworkProcess(threading.Thread):
 
     def run(self):
 
+        from . import arvideo
+
         def _connect():
             logging.info('Connection to ardrone')
             if self.use_video:
@@ -101,30 +101,43 @@ class ARDroneNetworkProcess(threading.Thread):
                         socket.AF_INET,
                         socket.SOCK_STREAM
                     )
-                    video_socket.connect(ARDRONE_VIDEO_ADDR)
+                    video_socket.setsockopt(
+                        socket.SOL_SOCKET,
+                        socket.SO_REUSEADDR, 1)
                     video_socket.setblocking(0)
+                    video_socket.connect(ARDRONE_VIDEO_ADDR)
                 else:
                     video_socket = socket.socket(
                         socket.AF_INET,
                         socket.SOCK_DGRAM
                     )
+                    video_socket.setsockopt(
+                        socket.SOL_SOCKET,
+                        socket.SO_REUSEADDR, 1)
                     video_socket.setblocking(0)
                     video_socket.bind(('', ARDRONE_VIDEO_PORT))
                     video_socket.sendto(INIT_BYTES, ARDRONE_VIDEO_ADDR)
             else:
                 video_socket = socket.socket()
+                video_socket.setsockopt(
+                    socket.SOL_SOCKET,
+                    socket.SO_REUSEADDR, 1)
+                video_socket.setblocking(0)
+
             nav_socket = socket.socket(
                 socket.AF_INET,
                 socket.SOCK_DGRAM,
                 socket.IPPROTO_UDP,
             )
+            nav_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             nav_socket.setblocking(0)
             nav_socket.bind(('', ARDRONE_NAVDATA_PORT))
             nav_socket.sendto(INIT_BYTES, ARDRONE_NAVDATA_ADDR)
 
             control_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            control_socket.connect(ARDRONE_CONTROL_ADDR)
+            control_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             control_socket.setblocking(0)
+            control_socket.connect(ARDRONE_CONTROL_ADDR)
             logging.warn('Connection established')
             return video_socket, nav_socket, control_socket
 
