@@ -3,13 +3,12 @@
 
 # Drone Quest
 
-Our goal is to use terminal commands to send commands to a Parrot AR Drone 2.0 and successfuly make the connect.
-The end goal of this project is to hopefully be able to fly a drone using a Leap Motion Controller.
+Our goal is to use a web interface to send commands to a Parrot AR Drone 2.0 and successfuly fly the drone.
+The end goal of this project is to fly a drone using a Leap Motion Controller.
 
 
 ## Core Features:
 - Create a python-based API that will communicate with a front-end server
-- Send terminal commands to the drone, that the drone will then execute
 - Send useful drone information to a front-end user interface
 - Create a module that anyone with a drone can pip install, then use to control their personal drone
 	
