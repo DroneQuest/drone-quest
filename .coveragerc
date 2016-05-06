@@ -11,3 +11,6 @@ omit =
 exclude_lines=
   if __name__ == .__main__.:
   except ImportError:
+  from .
+  print
+  try
