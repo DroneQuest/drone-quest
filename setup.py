@@ -12,6 +12,7 @@ TEST = [
     'coverage',
     'pytest-cov',
     'pytest-mock',
+    'mock',
     'requests',
 ]
 DEV = [
