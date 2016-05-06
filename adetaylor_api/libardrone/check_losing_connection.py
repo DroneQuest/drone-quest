@@ -54,7 +54,7 @@ if __name__ == '__main__':
         seq += 1
         at("COMWDG", seq, [])
         if len(inputready) == 0:
-            print "Connection lost for the %d time !" % stopping
+            print("Connection lost for the %d time !" % stopping)
             nav_socket.send("\x01\x00\x00\x00")
             stopping += 1
         for i in inputready:

@@ -1,4 +1,4 @@
-from . import h264decoder, paveparser
+from adetaylor_api.libardrone import h264decoder, paveparser
 import mock
 import os
 import io
