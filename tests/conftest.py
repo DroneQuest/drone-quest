@@ -196,11 +196,11 @@ def drone_listener(mocker):
     """"""
     from leap_motion.ar_leap import DroneListener
     mocker.patch('leap_motion.ar_leap.Leap', MockLeap)
+    mocker.patch('leap_motion.ar_leap.Leap.LeapPython')
     return DroneListener()
 
 
 @pytest.fixture()
 def requests(mocker):
     mocker.patch('leap_motion.ar_leap.requests')
-    mocker.patch('os.remove')
     return Requests
