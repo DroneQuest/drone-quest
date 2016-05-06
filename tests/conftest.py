@@ -171,20 +171,23 @@ class Requests(object):
 
 
 @pytest.fixture()
-def drone():
+def drone(mocker):
     """Return a configured fake drone."""
+    mocker.patch('leap_motion.ar_leap.Leap', MockLeap)
     return MockDrone()
 
 
 @pytest.fixture()
-def response():
+def response(mocker):
     """Return a fake responses for a fake drone."""
+    mocker.patch('leap_motion.ar_leap.Leap', MockLeap)
     return MockResponse()
 
 
 @pytest.fixture()
-def controller():
+def controller(mocker):
     """Return a configured fake drone."""
+    mocker.patch('leap_motion.ar_leap.Leap', MockLeap)
     return MockController()
 
 
@@ -192,10 +195,12 @@ def controller():
 def drone_listener(mocker):
     """"""
     from leap_motion.ar_leap import DroneListener
-    mocker.patch('leap_motion.ar_leap.requests')
+    mocker.patch('leap_motion.ar_leap.Leap', MockLeap)
     return DroneListener()
 
 
 @pytest.fixture()
-def requests():
+def requests(mocker):
+    mocker.patch('leap_motion.ar_leap.requests')
+    mocker.patch('os.remove')
     return Requests
