@@ -101,18 +101,29 @@ class ARDroneNetworkProcess(threading.Thread):
                         socket.AF_INET,
                         socket.SOCK_STREAM
                     )
-                    video_socket.connect(ARDRONE_VIDEO_ADDR)
+                    video_socket.setsockopt(
+                        socket.SOL_SOCKET,
+                        socket.SO_REUSEADDR, 1)
                     video_socket.setblocking(0)
+                    video_socket.connect(ARDRONE_VIDEO_ADDR)
                 else:
                     video_socket = socket.socket(
                         socket.AF_INET,
                         socket.SOCK_DGRAM
                     )
+                    video_socket.setsockopt(
+                        socket.SOL_SOCKET,
+                        socket.SO_REUSEADDR, 1)
                     video_socket.setblocking(0)
                     video_socket.bind(('', ARDRONE_VIDEO_PORT))
                     video_socket.sendto(INIT_BYTES, ARDRONE_VIDEO_ADDR)
             else:
                 video_socket = socket.socket()
+                video_socket.setsockopt(
+                    socket.SOL_SOCKET,
+                    socket.SO_REUSEADDR, 1)
+                video_socket.setblocking(0)
+
             nav_socket = socket.socket(
                 socket.AF_INET,
                 socket.SOCK_DGRAM,
