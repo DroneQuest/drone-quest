@@ -1,6 +1,6 @@
-"""Leap to Drone Controls."""
 import time
 import sys
+# from tests.conftest import MockLeap as Leap
 if sys.version_info.major > 2:
     print("WARNING! Leap is not Python3 Compatible. Using mock object instead")
     from tests.conftest import MockLeap as Leap
@@ -15,7 +15,7 @@ else:
         from tests.conftest import MockLeap as Leap
 import sys
 import requests
-from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
+# from Leap import CircleGesture, KeyTapGesture, ScreenTapGesture, SwipeGesture
 
 from server.bottle_drone import DRONE_SERVER_ADDRESS
 
