@@ -91,7 +91,8 @@ class ARDroneNetworkProcess(threading.Thread):
 
     def run(self):
 
-        from . import arvideo
+        if self.use_video and not self.is_ar_drone_2:
+            from . import arvideo
 
         def _connect():
             logging.info('Connection to ardrone')
