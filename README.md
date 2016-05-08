@@ -1,7 +1,6 @@
 
 ![DroneQuest Tests](https://api.travis-ci.org/DroneQuest/drone-quest.svg "Tests are passing! ... right?")
 
-
 # DroneQuest
 
 ### What is DroneQuest?
@@ -9,6 +8,17 @@ DroneQuest is a collaborative project between students of Codefellows JavaScript
 The Python portion of this project allows users to connect any controller they want to an API endpoint and send commands to an [AR Parrot Drone](http://www.parrot.com/usa/products/ardrone-2/).
 The Javascript portion is an interactive locally hosted web page, allowing the user to control the drone and see feedback from it.
 ### How do I use DroneQuest?
+=======
+## Core Features:
+- Create a python-based API that will communicate with a front-end server
+- Send useful drone information to a front-end user interface
+- Create a module that anyone with a drone can pip install, then use to control their personal drone
+	
+## Stretch Goals:
+- Connect a Leap Motion Controller to control the drone
+- Send commands via the front-end web application we have created
+- Use VR goggles that will connect to the drone cameras 
+>>>>>>> master
 
 Dependencies:
 - [Python 2.7](https://www.python.org/download/releases/2.7/)
