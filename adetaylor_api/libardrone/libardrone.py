@@ -17,30 +17,50 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
-
-
 """
 Python library for the AR.Drone.
 
-This module was tested with Python 2.6.6 and AR.Drone vanilla firmware 1.5.1.
+V.1 Tested with Python 2.6.6 and AR.Drone vanilla firmware 1.5.1.
+V.2 Tested with Python 2.7, Python 3.5 and vanilla firmware 2.0
 """
 
-
+import time
 import socket
 import struct
 import sys
 import threading
 import multiprocessing
+import numpy as np
 
-import arnetwork
+from .arnetwork import (
+    ARDroneNetworkProcess,
+    ARDRONE_COMMAND_ADDR,
+    NAVDATA_KEYS,
+)
 
 
 __author__ = "Bastian Venthur"
 
 
-ARDRONE_NAVDATA_PORT = 5554
-ARDRONE_VIDEO_PORT = 5555
-ARDRONE_COMMAND_PORT = 5556
+SESSION_ID = "943dac23"
+USER_ID = "36355d78"
+APP_ID = "21d958e4"
+
+
+AVAILABLE_COMMANDS = [
+    "emergency",
+    "land",
+    "takeoff",
+    "move_left",
+    "move_right",
+    "move_down",
+    "move_up",
+    "move_backward",
+    "move_forward",
+    "turn_left",
+    "turn_right",
+    "hover",
+]
 
 
 class ARDrone(object):
@@ -48,25 +68,81 @@ class ARDrone(object):
 
     Instanciate this class to control your drone and receive decoded video and
     navdata.
+    Possible value for video codec (drone2):
+      NULL_CODEC    = 0,
+      UVLC_CODEC    = 0x20,       // codec_type value is used for START_CODE
+      P264_CODEC    = 0x40,
+      MP4_360P_CODEC = 0x80,
+      H264_360P_CODEC = 0x81,
+      MP4_360P_H264_720P_CODEC = 0x82,
+      H264_720P_CODEC = 0x83,
+      MP4_360P_SLRS_CODEC = 0x84,
+      H264_360P_SLRS_CODEC = 0x85,
+      H264_720P_SLRS_CODEC = 0x86,
+      H264_AUTO_RESIZE_CODEC = 0x87, // resolution is automatically adjusted
+      MP4_360P_H264_360P_CODEC = 0x88,
     """
 
-    def __init__(self):
+    def __init__(self, is_ar_drone_2=False, hd=False, use_video=True):
+        """Initialize the AR Drone, with appropriate options flags."""
+        self.use_video = use_video
         self.seq_nr = 1
         self.timer_t = 0.2
         self.com_watchdog_timer = threading.Timer(self.timer_t, self.commwdg)
         self.lock = threading.Lock()
         self.speed = 0.2
-        self.at(at_config, "general:navdata_demo", "TRUE")
-        self.video_pipe, video_pipe_other = multiprocessing.Pipe()
-        self.nav_pipe, nav_pipe_other = multiprocessing.Pipe()
+
+        time.sleep(0.5)
+        self.config_ids_string = [SESSION_ID, USER_ID, APP_ID]
+        self.configure_multisession(
+            SESSION_ID,
+            USER_ID,
+            APP_ID,
+            self.config_ids_string,
+        )
+        self.set_session_id(self.config_ids_string, SESSION_ID)
+        time.sleep(0.5)
+        self.set_profile_id(self.config_ids_string, USER_ID)
+        time.sleep(0.5)
+        self.set_app_id(self.config_ids_string, APP_ID)
+        time.sleep(0.5)
+        self.set_video_bitrate_control_mode(self.config_ids_string, "1")
+        time.sleep(0.5)
+        self.set_video_bitrate(self.config_ids_string, "10000")
+        time.sleep(0.5)
+        self.set_max_bitrate(self.config_ids_string, "10000")
+        time.sleep(0.5)
+        self.set_fps(self.config_ids_string, "30")
+        time.sleep(0.5)
+        self.hd = hd
+        if self.hd:
+            self.image_shape = (720, 1280, 3)
+            self.set_video_codec(self.config_ids_string, 0x83)
+        else:
+            self.image_shape = (360, 640, 3)
+            self.set_video_codec(self.config_ids_string, 0x81)
+
+        self.last_command_is_hovering = True
         self.com_pipe, com_pipe_other = multiprocessing.Pipe()
-        self.network_process = arnetwork.ARDroneNetworkProcess(nav_pipe_other, video_pipe_other, com_pipe_other)
+
+        self.navdata = {0: {key: 0 for key in NAVDATA_KEYS}}
+
+        self.network_process = ARDroneNetworkProcess(
+            com_pipe_other,
+            is_ar_drone_2,
+            self,
+            use_video=use_video,
+        )
         self.network_process.start()
-        self.ipc_thread = arnetwork.IPCThread(self)
-        self.ipc_thread.start()
-        self.image = ""
-        self.navdata = dict()
+
+        self.image = np.zeros(self.image_shape, np.uint8)
         self.time = 0
+        self.last_command_is_hovering = True
+
+        time.sleep(1.0)
+
+        self.at(at_config_ids, self.config_ids_string)
+        self.at(at_config, "general:navdata_demo", "TRUE")
 
     def takeoff(self):
         """Make the drone takeoff."""
@@ -116,8 +192,11 @@ class ARDrone(object):
 
     def reset(self):
         """Toggle the drone's emergency state."""
+        # Enter emergency mode
         self.at(at_ref, False, True)
         self.at(at_ref, False, False)
+        # Leave emergency mode
+        self.at(at_ref, False, True)
 
     def trim(self):
         """Flat trim the drone."""
@@ -129,6 +208,19 @@ class ARDrone(object):
         Valid values are floats from [0..1]
         """
         self.speed = speed
+
+    def set_camera_view(self, downward):
+        """Set which video camera is used.
+
+        If 'downward' is true, downward camera will be viewed -
+        otherwise frontwards.
+        """
+        channel = None
+        if downward:
+            channel = 0
+        else:
+            channel = 1
+        self.set_video_channel(self.config_ids_string, channel)
 
     def at(self, cmd, *args, **kwargs):
         """Wrapper for the low level at commands.
@@ -144,6 +236,47 @@ class ARDrone(object):
         self.com_watchdog_timer = threading.Timer(self.timer_t, self.commwdg)
         self.com_watchdog_timer.start()
         self.lock.release()
+
+    def configure_multisession(self, session_id, user_id, app_id, config_ids_string):
+        self.at(at_config, "custom:session_id", session_id)
+        self.at(at_config, "custom:profile_id", user_id)
+        self.at(at_config, "custom:application_id", app_id)
+
+    def set_session_id(self, config_ids_string, session_id):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "custom:session_id", session_id)
+
+    def set_profile_id(self, config_ids_string, profile_id):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "custom:profile_id", profile_id)
+
+    def set_app_id(self, config_ids_string, app_id):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "custom:application_id", app_id)
+
+    def set_video_bitrate_control_mode(self, config_ids_string, mode):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "video:bitrate_control_mode", mode)
+
+    def set_video_bitrate(self, config_ids_string, bitrate):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "video:bitrate", bitrate)
+
+    def set_video_channel(self, config_ids_string, channel):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "video:video_channel", channel)
+
+    def set_max_bitrate(self, config_ids_string, max_bitrate):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "video:max_bitrate", max_bitrate)
+
+    def set_fps(self, config_ids_string, fps):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "video:codec_fps", fps)
+
+    def set_video_codec(self, config_ids_string, codec):
+        self.at(at_config_ids, config_ids_string)
+        self.at(at_config, "video:video_codec", codec)
 
     def commwdg(self):
         """Communication watchdog signal.
@@ -161,40 +294,62 @@ class ARDrone(object):
         application to close all sockets, pipes, processes and threads related
         with this object.
         """
+        print("Halt Called")
         self.lock.acquire()
         self.com_watchdog_timer.cancel()
         self.com_pipe.send('die!')
         self.network_process.terminate()
         self.network_process.join()
-        self.ipc_thread.stop()
-        self.ipc_thread.join()
         self.lock.release()
-        
-    def move(self,lr, fb, vv, va):
-        """Makes the drone move (translate/rotate).
 
- 	   Parameters:
-	   lr -- left-right tilt: float [-1..1] negative: left, positive: right
-	   rb -- front-back tilt: float [-1..1] negative: forwards, positive:
-        	backwards
-	   vv -- vertical speed: float [-1..1] negative: go down, positive: rise
-	   va -- angular speed: float [-1..1] negative: spin left, positive: spin 
-        	right"""
-        self.at(at_pcmd, True, lr, fb, vv, va)
+    def get_image(self):
+        _im = np.copy(self.image)
+        return _im
 
+    def get_navdata(self):
+        return self.navdata
+
+    def set_navdata(self, navdata):
+        self.navdata = navdata
+        self.get_navdata()
+
+    def set_image(self, image):
+        if (image.shape == self.image_shape):
+            self.image = image
+        self.image = image
+
+    def apply_command(self, command):
+        if command == 'emergency':
+            command = 'reset'
+
+        try:
+            getattr(self, command)()
+        except AttributeError:
+            print("Command %s is not a recognized command" % command)
+        if any((command == "hover" and not self.last_command_is_hovering,
+                command in ('land', 'takeoff'))):
+            self.last_command_is_hovering = True
+        else:
+            self.last_command_is_hovering = False
+
+
+class ARDrone2(ARDrone):
+    def __init__(self, hd=False, use_video=True):
+        ARDrone.__init__(self, True, hd, use_video=use_video)
 
 ###############################################################################
-### Low level AT Commands
+# Low level AT Commands
 ###############################################################################
+
 
 def at_ref(seq, takeoff, emergency=False):
     """
-    Basic behaviour of the drone: take-off/landing, emergency stop/reset)
+    Basic behaviour of the drone: take-off/landing, emergency stop/reset).
 
     Parameters:
     seq -- sequence number
     takeoff -- True: Takeoff / False: Land
-    emergency -- True: Turn of the engines
+    emergency -- True: Turn off the engines
     """
     p = 0b10001010101000000000000000000
     if takeoff:
@@ -203,9 +358,10 @@ def at_ref(seq, takeoff, emergency=False):
         p += 0b0100000000
     at("REF", seq, [p])
 
+
 def at_pcmd(seq, progressive, lr, fb, vv, va):
     """
-    Makes the drone move (translate/rotate).
+    Make the drone move (translate/rotate).
 
     Parameters:
     seq -- sequence number
@@ -215,13 +371,14 @@ def at_pcmd(seq, progressive, lr, fb, vv, va):
     rb -- front-back tilt: float [-1..1] negative: forwards, positive:
         backwards
     vv -- vertical speed: float [-1..1] negative: go down, positive: rise
-    va -- angular speed: float [-1..1] negative: spin left, positive: spin 
+    va -- angular speed: float [-1..1] negative: spin left, positive: spin
         right
 
     The above float values are a percentage of the maximum speed.
     """
     p = 1 if progressive else 0
     at("PCMD", seq, [p, float(lr), float(fb), float(vv), float(va)])
+
 
 def at_ftrim(seq):
     """
@@ -232,9 +389,10 @@ def at_ftrim(seq):
     """
     at("FTRIM", seq, [])
 
+
 def at_zap(seq, stream):
     """
-    Selects which video stream to send on the video UDP port.
+    Select which video stream to send on the video UDP port.
 
     Parameters:
     seq -- sequence number
@@ -243,9 +401,21 @@ def at_zap(seq, stream):
     # FIXME: improve parameters to select the modes directly
     at("ZAP", seq, [stream])
 
+
 def at_config(seq, option, value):
     """Set configuration parameters of the drone."""
     at("CONFIG", seq, [str(option), str(value)])
+
+
+def at_config_ids(seq, value):
+    """Set configuration parameters of the drone."""
+    at("CONFIG_IDS", seq, value)
+
+
+def at_ctrl(seq, num):
+    """Ask the parrot to drop its configuration file"""
+    at("CTRL", seq, [num, 0])
+
 
 def at_comwdg(seq):
     """
@@ -253,6 +423,7 @@ def at_comwdg(seq):
     """
     # FIXME: no sequence number
     at("COMWDG", seq, [])
+
 
 def at_aflight(seq, flag):
     """
@@ -263,6 +434,7 @@ def at_aflight(seq, flag):
     flag -- Integer: 1: start flight, 0: stop flight
     """
     at("AFLIGHT", seq, [flag])
+
 
 def at_pwm(seq, m1, m2, m3, m4):
     """
@@ -276,7 +448,8 @@ def at_pwm(seq, m1, m2, m3, m4):
     m4 -- back left command
     """
     # FIXME: what type do mx have?
-    pass
+    raise NotImplementedError()
+
 
 def at_led(seq, anim, f, d):
     """
@@ -290,6 +463,7 @@ def at_led(seq, anim, f, d):
     """
     pass
 
+
 def at_anim(seq, anim, d):
     """
     Makes the drone execute a predefined movement (animation).
@@ -300,6 +474,7 @@ def at_anim(seq, anim, d):
     d -- Integer: total duration in sections of the animation
     """
     at("ANIM", seq, [anim, d])
+
 
 def at(command, seq, params):
     """
@@ -315,10 +490,11 @@ def at(command, seq, params):
         elif type(p) == float:
             param_str += ",%d" % f2i(p)
         elif type(p) == str:
-            param_str += ',"'+p+'"'
+            param_str += ',"' + p + '"'
     msg = "AT*%s=%i%s\r" % (command, seq, param_str)
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.sendto(msg, ("192.168.1.1", ARDRONE_COMMAND_PORT))
+    sock.sendto(msg.encode("utf-8"), ARDRONE_COMMAND_ADDR)
+
 
 def f2i(f):
     """Interpret IEEE-754 floating-point value as signed integer.
@@ -328,78 +504,15 @@ def f2i(f):
     """
     return struct.unpack('i', struct.pack('f', f))[0]
 
-###############################################################################
-### navdata
-###############################################################################
-def decode_navdata(packet):
-    """Decode a navdata packet."""
-    offset = 0
-    _ =  struct.unpack_from("IIII", packet, offset)
-    drone_state = dict()
-    drone_state['fly_mask']             = _[1]       & 1 # FLY MASK : (0) ardrone is landed, (1) ardrone is flying
-    drone_state['video_mask']           = _[1] >>  1 & 1 # VIDEO MASK : (0) video disable, (1) video enable
-    drone_state['vision_mask']          = _[1] >>  2 & 1 # VISION MASK : (0) vision disable, (1) vision enable */
-    drone_state['control_mask']         = _[1] >>  3 & 1 # CONTROL ALGO (0) euler angles control, (1) angular speed control */
-    drone_state['altitude_mask']        = _[1] >>  4 & 1 # ALTITUDE CONTROL ALGO : (0) altitude control inactive (1) altitude control active */
-    drone_state['user_feedback_start']  = _[1] >>  5 & 1 # USER feedback : Start button state */
-    drone_state['command_mask']         = _[1] >>  6 & 1 # Control command ACK : (0) None, (1) one received */
-    drone_state['fw_file_mask']         = _[1] >>  7 & 1 # Firmware file is good (1) */
-    drone_state['fw_ver_mask']          = _[1] >>  8 & 1 # Firmware update is newer (1) */
-    drone_state['fw_upd_mask']          = _[1] >>  9 & 1 # Firmware update is ongoing (1) */
-    drone_state['navdata_demo_mask']    = _[1] >> 10 & 1 # Navdata demo : (0) All navdata, (1) only navdata demo */
-    drone_state['navdata_bootstrap']    = _[1] >> 11 & 1 # Navdata bootstrap : (0) options sent in all or demo mode, (1) no navdata options sent */
-    drone_state['motors_mask']          = _[1] >> 12 & 1 # Motor status : (0) Ok, (1) Motors problem */
-    drone_state['com_lost_mask']        = _[1] >> 13 & 1 # Communication lost : (1) com problem, (0) Com is ok */
-    drone_state['vbat_low']             = _[1] >> 15 & 1 # VBat low : (1) too low, (0) Ok */
-    drone_state['user_el']              = _[1] >> 16 & 1 # User Emergency Landing : (1) User EL is ON, (0) User EL is OFF*/
-    drone_state['timer_elapsed']        = _[1] >> 17 & 1 # Timer elapsed : (1) elapsed, (0) not elapsed */
-    drone_state['angles_out_of_range']  = _[1] >> 19 & 1 # Angles : (0) Ok, (1) out of range */
-    drone_state['ultrasound_mask']      = _[1] >> 21 & 1 # Ultrasonic sensor : (0) Ok, (1) deaf */
-    drone_state['cutout_mask']          = _[1] >> 22 & 1 # Cutout system detection : (0) Not detected, (1) detected */
-    drone_state['pic_version_mask']     = _[1] >> 23 & 1 # PIC Version number OK : (0) a bad version number, (1) version number is OK */
-    drone_state['atcodec_thread_on']    = _[1] >> 24 & 1 # ATCodec thread ON : (0) thread OFF (1) thread ON */
-    drone_state['navdata_thread_on']    = _[1] >> 25 & 1 # Navdata thread ON : (0) thread OFF (1) thread ON */
-    drone_state['video_thread_on']      = _[1] >> 26 & 1 # Video thread ON : (0) thread OFF (1) thread ON */
-    drone_state['acq_thread_on']        = _[1] >> 27 & 1 # Acquisition thread ON : (0) thread OFF (1) thread ON */
-    drone_state['ctrl_watchdog_mask']   = _[1] >> 28 & 1 # CTRL watchdog : (1) delay in control execution (> 5ms), (0) control is well scheduled */
-    drone_state['adc_watchdog_mask']    = _[1] >> 29 & 1 # ADC Watchdog : (1) delay in uart2 dsr (> 5ms), (0) uart2 is good */
-    drone_state['com_watchdog_mask']    = _[1] >> 30 & 1 # Communication Watchdog : (1) com problem, (0) Com is ok */
-    drone_state['emergency_mask']       = _[1] >> 31 & 1 # Emergency landing : (0) no emergency, (1) emergency */
-    data = dict()
-    data['drone_state'] = drone_state
-    data['header'] = _[0]
-    data['seq_nr'] = _[2]
-    data['vision_flag'] = _[3]
-    offset += struct.calcsize("IIII")
-    while 1:
-        try:
-            id_nr, size =  struct.unpack_from("HH", packet, offset)
-            offset += struct.calcsize("HH")
-        except struct.error:
-            break
-        values = []
-        for i in range(size-struct.calcsize("HH")):
-            values.append(struct.unpack_from("c", packet, offset)[0])
-            offset += struct.calcsize("c")
-        # navdata_tag_t in navdata-common.h
-        if id_nr == 0:
-            values = struct.unpack_from("IIfffIfffI", "".join(values))
-            values = dict(zip(['ctrl_state', 'battery', 'theta', 'phi', 'psi', 'altitude', 'vx', 'vy', 'vz', 'num_frames'], values))
-            # convert the millidegrees into degrees and round to int, as they
-            # are not so precise anyways
-            for i in 'theta', 'phi', 'psi':
-                values[i] = int(values[i] / 1000)
-                #values[i] /= 1000
-        data[id_nr] = values
-    return data
-
 
 if __name__ == "__main__":
-
+    '''
+    For testing purpose only
+    '''
     import termios
     import fcntl
     import os
-    
+
     fd = sys.stdin.fileno()
 
     oldterm = termios.tcgetattr(fd)
@@ -410,14 +523,28 @@ if __name__ == "__main__":
     oldflags = fcntl.fcntl(fd, fcntl.F_GETFL)
     fcntl.fcntl(fd, fcntl.F_SETFL, oldflags | os.O_NONBLOCK)
 
-    drone = ARDrone()
+    drone = ARDrone(is_ar_drone_2=True)
 
+    import cv2
     try:
+        startvideo = True
+        video_waiting = False
         while 1:
+            time.sleep(.0001)
+            if startvideo:
+                try:
+                    cv2.imshow("Drone camera", cv2.cvtColor(drone.get_image(), cv2.COLOR_BGR2RGB))
+                    cv2.waitKey(1)
+                except:
+                    if not video_waiting:
+                        print("Video will display when ready")
+                    video_waiting = True
+                    pass
+
             try:
                 c = sys.stdin.read(1)
                 c = c.lower()
-                print "Got character", c
+                print("Got character", c)
                 if c == 'a':
                     drone.move_left()
                 if c == 'd':
@@ -446,10 +573,29 @@ if __name__ == "__main__":
                     drone.hover()
                 if c == 'y':
                     drone.trim()
+                if c == 'i':
+                    startvideo = True
+                    try:
+                        navdata = drone.get_navdata()
+
+                        print('Emergency landing =', navdata['drone_state']['emergency_mask'])
+                        print('User emergency landing = ', navdata['drone_state']['user_el'])
+                        print('Navdata type= ', navdata['drone_state']['navdata_demo_mask'])
+                        print('Altitude= ', navdata[0]['altitude'])
+                        print('video enable= ', navdata['drone_state']['video_mask'])
+                        print('vision enable= ', navdata['drone_state']['vision_mask'])
+                        print('command_mask= ', navdata['drone_state']['command_mask'])
+                    except:
+                        pass
+
+                if c == 'j':
+                    print("Asking for configuration...")
+                    drone.at(at_ctrl, 5)
+                    time.sleep(0.5)
+                    drone.at(at_ctrl, 4)
             except IOError:
                 pass
     finally:
         termios.tcsetattr(fd, termios.TCSAFLUSH, oldterm)
         fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
         drone.halt()
-

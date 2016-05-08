@@ -1,12 +1,14 @@
 
 ![DroneQuest Tests](https://api.travis-ci.org/DroneQuest/drone-quest.svg "Tests are passing! ... right?")
 
-# Drone Quest
+# DroneQuest
 
-Our goal is to use a web interface to send commands to a Parrot AR Drone 2.0 and successfuly fly the drone.
-The end goal of this project is to fly a drone using a Leap Motion Controller.
-
-
+### What is DroneQuest?
+DroneQuest is a collaborative project between students of Codefellows JavaScript 401 and Python 401 classes.
+The Python portion of this project allows users to connect any controller they want to an API endpoint and send commands to an [AR Parrot Drone](http://www.parrot.com/usa/products/ardrone-2/).
+The Javascript portion is an interactive locally hosted web page, allowing the user to control the drone and see feedback from it.
+### How do I use DroneQuest?
+=======
 ## Core Features:
 - Create a python-based API that will communicate with a front-end server
 - Send useful drone information to a front-end user interface
@@ -16,83 +18,59 @@ The end goal of this project is to fly a drone using a Leap Motion Controller.
 - Connect a Leap Motion Controller to control the drone
 - Send commands via the front-end web application we have created
 - Use VR goggles that will connect to the drone cameras 
+>>>>>>> master
 
-Sources: 
-- [Tutorial Site](http://www.playsheep.de/drone/)
-- [Useful Github Repo](https://github.com/venthur/python-ardrone) Written by Bastian Venthur
+Dependencies:
+- [Python 2.7](https://www.python.org/download/releases/2.7/)
+- [Bottle](http://bottlepy.org/docs/dev/index.html)
+- [numpy](http://www.numpy.org/)
 
-Project Members
+Linux/Mac OS:
+```
+you@dronequest:~ $ git clone https://github.com/DroneQuest/drone-quest.git
+you@dronequest:~ $ cd drone-quest
+you@dronequest:~ $ python setup.py install
+you@dronequest:~ $ droneserve
+```
+
+Windows Systems:
+```
+C:\Users\you> git clone https://github.com/DroneQuest/drone-quest.git
+C:\Users\you> cd drone-quest
+C:\Users\you> python setup.py install
+C:\Users\you> droneserve
+```
+
+Point an http post request to [127.0.0.1:3000/do/&lt;command&gt;](http://127.0.0.1:3000/do/takeoff) to instruct the drone.
+Check out our [API Endpoints Wiki Page](https://github.com/DroneQuest/drone-quest/wiki/API-Endpoints) for a list of commands.
+
+
+### How did you accomplish this project?
+We used Bastian Venthur's [Useful Github Repo](https://github.com/venthur/python-ardrone), which was later
+improved by [Jonathan Hunt](https://github.com/jjh42/python-ardrone) and [Adrian Taylor](https://github.com/adetaylor/python-ardrone).
+
+In addition, a very useful tutorial can be found [here](http://www.playsheep.de/drone/).
+
+This project was built with
 - Luc Ho (JavaScript)
 - Kevin Sulonen (JavaScript)
 - Norton Pengra (Python)
 - Will Weatherford (Python)
 - Munir Ibrahim (Python)
 
-<a href="https://flattr.com/submit/auto?user_id=venthur&url=http%3A%2F%2Fgithub.com%2Fventhur%2Fpython-ardrone" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0"></a>
-
-[![Video of the drone in action](https://img.youtube.com/vi/2HEV37GbUow/0.jpg)](https://www.youtube.com/watch?v=2HEV37GbUow "Click to go to the video.")
-
-A video of the library controlling a drone in action (click to jump to the video).
-
-Getting Started:
-----------------
-
-```python
->>> import libardrone
->>> drone = libardrone.ARDrone()
->>> # You might need to call drone.reset() before taking off if the drone is in
->>> # emergency mode
->>> drone.takeoff()
->>> drone.land()
->>> drone.halt()
-```
-
-The drone's property `image` contains always the latest image from the camera.
-The drone's property `navdata` contains always the latest navdata.
-
-
-Demo:
------
-
-There is also a demo application included which shows the video from the drone
-and lets you remote-control the drone with the keyboard:
-
-    RETURN      - takeoff
-    SPACE       - land
-    BACKSPACE   - reset (from emergency)
-    a/d         - left/right
-    w/s         - forward/back
-    1,2,...,0   - speed
-    UP/DOWN     - altitude
-    LEFT/RIGHT  - turn left/right
-
-Here is a [video] of the library in action:
-
-  [video]: http://youtu.be/2HEV37GbUow
-
-Repository:
------------
-
-The public repository is located here:
-
-  git://github.com/venthur/python-ardrone.git
-
-
-Requirements:
--------------
-
-This software was tested with the following setup:
+### Testing
+This software was tested with the following setups:
 
   * Python 2.6.6
+  * Python 2.7.6 (better setup)
+  * Python 3.5 (only Leap Motion API is incompatible)
   * Psyco 1.6 (recommended)
   * Pygame 1.8.1 (only for the demo)
   * Unmodified AR.Drone firmware 1.5.1
+  * Unmodified AR.Drone firmware 2.0
 
 
-License:
---------
-
+### License
 This software is published under the terms of the MIT License:
 
   http://www.opensource.org/licenses/mit-license.php
-
