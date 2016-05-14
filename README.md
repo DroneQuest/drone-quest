@@ -7,7 +7,7 @@
 DroneQuest is a collaborative project between students of Codefellows JavaScript 401 and Python 401 classes.
 The Python portion of this project allows users to connect any controller they want to an API endpoint and send commands to an [AR Parrot Drone](http://www.parrot.com/usa/products/ardrone-2/).
 The Javascript portion is an interactive locally hosted web page, allowing the user to control the drone and see feedback from it.
-### How do I use DroneQuest?
+### [How do I use DroneQuest?](https://github.com/DroneQuest/drone-quest/wiki)
 =======
 ## Core Features:
 - Create a python-based API that will communicate with a front-end server
