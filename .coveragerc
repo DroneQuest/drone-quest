@@ -1,0 +1,16 @@
+[run]
+branch = True
+omit =
+  .tox/*
+  tests/*
+  adetaylor_api/*
+  setup.py
+  leap_motion/Leap.py
+
+[report]
+exclude_lines=
+  if __name__ == .__main__.:
+  except ImportError:
+  from .
+  print
+  try
